@@ -4,7 +4,6 @@
 
 using MpiLinux = MpiWrapper<Os::Linux, true>;
 
-
 MpiLinux::mpi_env MpiLinux::env {};
 
 std::string MpiLinux::processor_name() noexcept {

@@ -7,6 +7,8 @@
 
 #if MPI_ENABLED==true
     #include <mpi.h>
+#else
+    #include <cstring>
 #endif
 
 template<Os OS, bool MpiEnabled>
@@ -35,10 +37,10 @@ namespace mpi {
 namespace mock {
 
     struct mpi_status {
-        int count;
+        size_type count;
         int cancelled;
-        int MPI_SOURCE;
-        int MPI_TAG;
+        id_type MPI_SOURCE;
+        tag_type MPI_TAG;
         int MPI_ERROR;
     };
 
@@ -92,10 +94,11 @@ namespace mock {
             mpi::id_type source,
             mpi::size_type count,
             mpi::tag_type tag,
-            T& data) 
-            : data{static_cast<void*>(new T{data})}
+            T& first) 
+            : data{malloc(count * sizeof(first))}
             , type{mpi_data_type<T>()}
         {
+            memcpy(data, &first, count * sizeof(T));
             status = mpi_status{count, 0, source, tag, 0};
         }
 
@@ -115,9 +118,9 @@ namespace mock {
         }
 
         template<typename T>
-        std::pair<T const&, mpi_status const&> read() const {
+        std::pair<T*, mpi_status const&> get() const {
             assert(mpi_data_type<T>() == type);
-            return std::make_pair(*static_cast<T*>(data), status);
+            return {static_cast<T*>(data), status};
         }
 
         ~buffer_entry() {
@@ -174,17 +177,61 @@ class MpiWrapper<OS, false> {
         }
     }
 
+    template<mpi::ValidContainer T>
+    static void send(id_type destination, tag_type tag, T& data) {
+        assert(destination == rank());
+        
+        auto it = sendrcv_buffer.find(tag);
+        auto entry = mpi::mock::buffer_entry{rank(),
+            static_cast<size_type>(container_traits<T>::size(data)),
+            tag,
+            container_traits<T>::front(data)};
+        
+        if(it == sendrcv_buffer.end()) {
+            sendrcv_buffer.emplace(tag, std::move(entry));
+        } else {
+            sendrcv_buffer.at(tag) = std::move(entry);
+        }
+    }
+
     template<mpi::ValidType T>
     static void recv(id_type source, tag_type tag, T& data, status& status) {
         assert(source == rank());
         auto it = sendrcv_buffer.find(tag);
         assert(it != sendrcv_buffer.end());
-        auto const& [msg, stat] = it->second.read<T>();
-        data = msg;
+        auto const& [msg, stat] = it->second.get<T>();
+        data = *msg;
         status = stat;
         sendrcv_buffer.erase(it);
     }
 
+    template<mpi::ValidType T>
+    static void recv(id_type source, tag_type tag, std::vector<T>& data, status& status) {
+        assert(source == rank());
+        auto it = sendrcv_buffer.find(tag);
+        assert(it != sendrcv_buffer.end());
+        
+        auto const& [msg, stat] = it->second.get<T>();
+        status = stat;
+
+        data.resize(status.count);
+        memcpy(data.data(), msg, status.count * sizeof(T));
+        sendrcv_buffer.erase(it);
+    }
+
+    template<mpi::ValidContainer T>
+    static void recv(id_type source, tag_type tag, T& data, status& status) {
+        assert(source == rank());
+        auto it = sendrcv_buffer.find(tag);
+        assert(it != sendrcv_buffer.end());
+        
+        auto const& [msg, stat] = it->second.get<T>();
+        status = stat;
+        assert(status.count <= container_traits<T>::size(data));
+
+        memcpy(&container_traits<T>::front(data), msg, status.count * sizeof(T));
+        sendrcv_buffer.erase(it);
+    }
     
 
 private:
@@ -219,7 +266,7 @@ class MpiWrapper<Os::Linux, true> {
     template<mpi::ValidContainer T>
     static void broadcast(id_type source, T& data) {
         MPI_Bcast(&container_traits<T>::front(data),
-            static_cast<int>(container_traits<T>::size(data)),
+            static_cast<size_type>(container_traits<T>::size(data)),
             mpi_data_type<typename container_traits<T>::data>(),
             source,
             MPI_COMM_WORLD);
@@ -230,9 +277,25 @@ class MpiWrapper<Os::Linux, true> {
         MPI_Send(&data, 1u, mpi_data_type<T>(), destination, tag, MPI_COMM_WORLD);
     }
 
+    template<mpi::ValidContainer T>
+    static void send(id_type destination, tag_type tag, T& data) {
+        MPI_Send(&container_traits<T>::front(data),
+            static_cast<size_type>(container_traits<T>::size(data)),
+            mpi_data_type<typename container_traits<T>::data>(),
+            destination, tag, MPI_COMM_WORLD);
+    }
+
     template<mpi::ValidType T>
     static void recv(id_type source, tag_type tag, T& data, status& status) {
         MPI_Recv(&data, 1u, mpi_data_type<T>(), source, tag, MPI_COMM_WORLD, &status);
+    }
+
+    template<mpi::ValidContainer T>
+    static void recv(id_type source, tag_type tag, T& data, status& status) {
+        MPI_Recv(&container_traits<T>::front(data),
+            static_cast<size_type>(container_traits<T>::size(data)),
+            mpi_data_type<typename container_traits<T>::data>(),
+            source, tag, MPI_COMM_WORLD, &status);
     }
 
   protected:

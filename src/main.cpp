@@ -1,7 +1,19 @@
 #include <iostream>
+#include <iterator>
 #include <sstream>
 
 #include "mpi_interface.h"
+
+template<typename T>
+std::string vector_to_str(std::vector<T> const& container) {
+    std::stringstream ss;
+    ss << "[ ";
+    std::transform(container.cbegin(), container.cend(), std::ostream_iterator<T>(ss, " "), [](auto const& entry) {
+        return entry;
+    });
+    ss << "]";
+    return ss.str();
+}
 
 template<typename...Args>
 void print(Args...args) {
@@ -35,7 +47,7 @@ void demonstrate_broadcast() {
         std::vector<double> data {Mpi::rank() + 3.141592, Mpi::rank() + 2.71828, Mpi::rank() + 1.61803};
         const auto orig = data;
         Mpi::broadcast(Mpi::size() - 1, data);
-        print("Rank ", Mpi::rank(), " got [", orig[0], ", ", orig[1], ", ", orig[2], "] -> [", data[0], ", ", data[1], ", ", data[2], "]");
+        print("Rank ", Mpi::rank(), " got ", vector_to_str(orig), " -> ", vector_to_str(data));
     }
 }
 
@@ -61,13 +73,32 @@ void demonstrate_sendrecv() {
         if(status.MPI_TAG == mock_tag) {
             print("Rank ", Mpi::rank(), " got no message.");
         } else {
-            print("Rank ", Mpi::rank(), " got a message from ", status.MPI_SOURCE, ": ", data);
+            print("Rank ", Mpi::rank(), " got a message from ", status.MPI_SOURCE, ": tag=", status.MPI_TAG, ", value=", data);
+        }
+    }
+    Mpi::barrier();
+    {
+        Mpi::status status;
+        status.MPI_TAG = mock_tag;
+
+        std::vector<int> data = {Mpi::rank(), Mpi::rank()+1, Mpi::rank()+2, Mpi::rank()+4};
+        
+        if (Mpi::rank() == sender) {
+            Mpi::send(reciever, tag, data);
+        }
+        if (Mpi::rank() == reciever) {
+            Mpi::recv(sender, tag, data, status);
+        }
+
+        if(status.MPI_TAG == mock_tag) {
+            print("Rank ", Mpi::rank(), " got no message.");
+        } else {
+            print("Rank ", Mpi::rank(), " got a message from ", status.MPI_SOURCE, ": tag=", status.MPI_TAG, ", value=",  vector_to_str(data));
         }
     }
 }
 
 int main() {
-
     demonstrate_multiprocessing();
     Mpi::barrier();
     
@@ -76,5 +107,4 @@ int main() {
 
     demonstrate_sendrecv();
     Mpi::barrier();
-
 }
