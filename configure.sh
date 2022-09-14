@@ -6,7 +6,7 @@ cd build
 
 export MPI_ENABLED=${MPI_ENABLED:-"false"}
 
-if [ $MPI_ENABLED==true ]; then
+if [ ${MPI_ENABLED} = "true" ]; then
     export CXX=mpicxx
 else
     export CXX=g++
