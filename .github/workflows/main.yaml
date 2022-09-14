@@ -23,9 +23,7 @@ jobs:
           sudo apt-get install -y mpich
 
       - name: Build
-        run: bash configure.sh
-        env:
-          -ENABLE_MPI: true
+        run: ENABLE_MPI=true bash configure.sh
       
       - name: Run
         run: mpirun -np 2 bin/mpidemo
@@ -37,8 +35,6 @@ jobs:
 
       - name: Build
         run: bash configure.sh
-        env:
-          -ENABLE_MPI: false
 
       - name: Run
         run: bin/mpidemo
