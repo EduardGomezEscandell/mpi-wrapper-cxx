@@ -12,16 +12,21 @@
             "options": {
                 "cwd": "${workspaceFolder}",
             },
-            "windows" : {
+            "windows": {
                 "problemMatcher": "$msCompile",
                 "command": ".\\configure.bat",
             },
-            "linux" : {
+            "linux": {
                 "problemMatcher": "$gcc",
                 "command": "bash",
-                "args" : [
+                "args": [
                     "configure.sh"
-                ]
+                ],
+                "options": {
+                    "env": {
+                        "MPI_ENABLED": "true"
+                    }
+                }
             }
         }
     ]
