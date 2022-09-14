@@ -16,10 +16,12 @@ MPI_ENABLED=true bash configure.sh
 Set MPI_ENABLED to true or false to choose.
 
 # Run
-To run it in a single rank, simply run the executable located inside of `bin`.
-
-To run it in multple ranks, do:
+To run it in a single rank, simply run the executable located inside of `bin`:
+```Powershell
+.\bin\mpidemo.exe          # On windows
 ```
-mpirun -np 4 bin/mpidemo
+```bash
+./bin/mpidemo              # On Linux
+mpirun -np 4 bin/mpidemo   # On Linux with mpi
 ```
-Chenge the `4` for the number of ranks you desire. Note that if you mpirun an executable compiled without MPI, it's simply goint run the same process in each rank independently.
+Change the `4` with the number of ranks you desire. Note that if you mpirun an executable compiled without MPI, it's simply going run the same process in each rank independently.
