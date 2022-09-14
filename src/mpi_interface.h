@@ -1,4 +1,4 @@
-#include <string_view>
+#include <string>
 #include "defines.h"
 
 #if MPI_ENABLED==true
