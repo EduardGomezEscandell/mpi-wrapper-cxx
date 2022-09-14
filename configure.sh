@@ -12,3 +12,6 @@ mpicxx "../src/main.cpp"                                   \
     -std=c++20                                             \
     -o "../bin/mpi-demo"                                   \
     -DMPI_ENABLED=$MPI_ENABLED
+
+echo "Compilation finished with status $?"
+   
