@@ -5,7 +5,7 @@ enum class Os {
 };
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-    #define PLATFORM Os::windows
+    #define PLATFORM Os::Windows
 #elif __linux__
     #define PLATFORM Os::Linux
 #else
