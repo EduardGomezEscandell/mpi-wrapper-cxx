@@ -18,7 +18,8 @@ jobs:
 
       - name: Build
         run: bash configure.sh
-        env: ENABLE_MPI=true
+        env:
+          -ENABLE_MPI: true
       
       - name: Run
         run: mpirun -np 2 bin/mpidemo
@@ -30,7 +31,8 @@ jobs:
 
       - name: Build
         run: bash configure.sh
-        env: ENABLE_MPI=false
+        env:
+          -ENABLE_MPI: false
       
       - name: Run
         run: bin/mpidemo
