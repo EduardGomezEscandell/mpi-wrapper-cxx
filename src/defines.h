@@ -5,13 +5,25 @@ enum class Os {
 };
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-    #define PLATFORM Os::Windows
+    #define PLATFORM_IS_WINDOWS
+    #define MPI_ENABLED false
 #elif __linux__
-    #define PLATFORM Os::Linux
+    #define PLATFORM_IS_LINUX
+    #ifndef MPI_ENABLED
+        #define MPI_ENABLED false
+    #endif
 #else
     error "Unsupported platform"
 #endif
 
 constexpr Os os() noexcept {
-    return PLATFORM;
+    #ifdef PLATFORM_IS_WINDOWS
+        return Os::Windows;
+    #else
+        return Os::Linux;
+    #endif
+}
+
+constexpr bool mpi_enabled() noexcept {
+    return MPI_ENABLED;
 }

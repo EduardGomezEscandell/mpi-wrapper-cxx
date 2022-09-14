@@ -1,10 +1,7 @@
 #include <iostream>
 #include "defines.h"
+#include "mpi_interface.h"
 
 int main() {
-    if constexpr (os() == Os::Windows) {
-        std::cout << "Hello windows!" << std::endl;
-    } else {
-        std::cout << "Hello linux!" << std::endl;
-    }
+    std::cout << "Rank "<< Mpi::rank() << "/" << Mpi::size() - 1 <<": My name is " << Mpi::processor_name() << std::endl;
 }
