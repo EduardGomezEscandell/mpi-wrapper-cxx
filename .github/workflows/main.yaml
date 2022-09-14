@@ -1,0 +1,48 @@
+name: CI
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  ubuntu-mpi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install MPI
+        run: apt-get install -y mpich
+
+      - name: Build
+        run: bash configure.sh
+        env: ENABLE_MPI=true
+      
+      - name: Run
+        run: mpirun -np 2 bin/mpidemo
+
+  ubuntu-single-thread:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: bash configure.sh
+        env: ENABLE_MPI=false
+      
+      - name: Run
+        run: bin/mpidemo
+
+  windows-single-thread:
+    runs-on: windows11
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: .\configure.bat
+      
+      - name: Run
+        run: .\bin\mpidemo.exe
+  
