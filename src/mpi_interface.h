@@ -32,24 +32,9 @@ class MpiWrapper<OS, false> {
 template<>
 class MpiWrapper<Os::Linux, true> {
   public:
-    static std::string processor_name() noexcept {
-        char name[MPI_MAX_PROCESSOR_NAME];
-        int len;
-        MPI_Get_processor_name(name, &len);
-        return name;
-    }
-
-    static std::size_t size() noexcept {
-        int world_size;
-        MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-        return static_cast<std::size_t>(world_size);
-    }
-
-    static std::size_t rank() noexcept {
-        int world_rank;
-        MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-        return world_rank;
-    }
+    static std::string processor_name() noexcept;
+    static std::size_t size() noexcept;
+    static std::size_t rank() noexcept;
 
   protected:
     // RAII class to initialize and finilize MPI
@@ -66,8 +51,6 @@ class MpiWrapper<Os::Linux, true> {
     static mpi_env env;
 
 };
-
-inline MpiWrapper<Os::Linux, true>::mpi_env MpiWrapper<Os::Linux, true>::env {};
 
 #endif
 

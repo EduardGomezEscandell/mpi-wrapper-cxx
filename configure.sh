@@ -12,7 +12,7 @@ else
     export CXX=g++
 fi
 
-${CXX} "../src/main.cpp"                                   \
+${CXX} "../src/main.cpp" "../src/mpi_interface.cpp"        \
     -Werror -Wall -Wextra -Wpedantic -Wconversion          \
     -O3                                                    \
     -std=c++2a                                             \

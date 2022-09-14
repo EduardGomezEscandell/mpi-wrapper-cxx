@@ -10,5 +10,6 @@ cl.exe                          ^
     /W4 /WX                     ^
     /std:c++20                  ^
     "../src/main.cpp"           ^
+    "../src/mpi_interface.cpp"  ^
     /link                       ^
     /out:"../bin/mpidemo.exe"
