@@ -4,6 +4,7 @@
 
 using MpiLinux = MpiWrapper<Os::Linux, true>;
 
+
 MpiLinux::mpi_env MpiLinux::env {};
 
 std::string MpiLinux::processor_name() noexcept {
@@ -13,16 +14,21 @@ std::string MpiLinux::processor_name() noexcept {
     return name;
 }
 
-std::size_t MpiLinux::size() noexcept {
+MpiLinux::size_type MpiLinux::size() noexcept {
     int world_size;
     MPI_Comm_size(MPI_COMM_WORLD, &world_size);
     return static_cast<std::size_t>(world_size);
 }
 
-std::size_t MpiLinux::rank() noexcept {
+MpiLinux::id_type MpiLinux::rank() noexcept {
     int world_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
     return world_rank;
+}
+
+void MpiLinux::barrier() noexcept
+{
+    MPI_Barrier(MPI_COMM_WORLD);
 }
 
 #endif
