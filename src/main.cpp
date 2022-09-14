@@ -16,7 +16,7 @@ int main() {
     // Showing async prints
     {
         std::string greeting = (std::stringstream{} << "Rank "<< Mpi::rank() << " says hello!\n").str();
-        std::cout << greeting;
+        std::cout << greeting << std::flush;
     }
     Mpi::barrier();
 
@@ -26,7 +26,7 @@ int main() {
         const auto orig = data;
         Mpi::broadcast(0, data);
         std::string msg = (std::stringstream{} << "Rank "<< Mpi::rank() << " got " << orig << " -> " << data << "\n").str();
-        std::cout << msg;
+        std::cout << msg << std::flush;
     }
     Mpi::barrier();
 
@@ -38,7 +38,7 @@ int main() {
         std::string msg = (std::stringstream{} << "Rank "<< Mpi::rank() << " got [" 
             << orig[0] << ", " << orig[1] << ", " << orig[2] << "] -> ["
             << data[0] << ", " << data[1] << ", " << data[2] << "]\n").str();
-        std::cout << msg;
+        std::cout << msg << std::flush;
     }
     Mpi::barrier();
 
