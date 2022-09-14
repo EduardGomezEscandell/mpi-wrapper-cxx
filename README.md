@@ -9,14 +9,15 @@ To compile in windows, install Microsoft Visual Studio and find the path to it. 
 ```
 .\configure.bat
 ```
-On linux, do:
+
+## Linux
 ```
 MPI_ENABLED=true bash configure.sh
 ```
-Set MPI_ENABLED to true or false to choose.
+Choose MPI_ENABLED between `true` or `false` to enable or disable compilation in MPI. Not that to compile with MPI you'll need to install package `mpich`.
 
 # Run
-To run it in a single rank, simply run the executable located inside of `bin`:
+Once compiled, you can run it with:
 ```Powershell
 .\bin\mpidemo.exe          # On windows
 ```
