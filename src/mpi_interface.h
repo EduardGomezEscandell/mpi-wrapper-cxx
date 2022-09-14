@@ -32,8 +32,6 @@ class MpiWrapper<OS, false> {
 template<>
 class MpiWrapper<Os::Linux, true> {
   public:
-    using Communicator = MPI_Comm;
-
     static std::string processor_name() noexcept {
         char name[MPI_MAX_PROCESSOR_NAME];
         int len;
@@ -54,8 +52,6 @@ class MpiWrapper<Os::Linux, true> {
     }
 
   protected:
-    static constexpr Communicator global_communicator {};
-
     // RAII class to initialize and finilize MPI
     struct mpi_env {
         mpi_env() noexcept {
