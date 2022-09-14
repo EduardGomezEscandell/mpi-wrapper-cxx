@@ -39,12 +39,12 @@ jobs:
         run: bash configure.sh
         env:
           -ENABLE_MPI: false
-      
+
       - name: Run
         run: bin/mpidemo
 
   windows-single-thread:
-    runs-on: windows11
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
 
