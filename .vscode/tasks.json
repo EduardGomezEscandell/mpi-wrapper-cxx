@@ -15,9 +15,6 @@
             "windows" : {
                 "problemMatcher": "$msCompile",
                 "command": ".\\configure.bat",
-                "args" : [
-
-                ]
             },
             "linux" : {
                 "problemMatcher": "$gcc",
