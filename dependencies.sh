@@ -1,1 +1,3 @@
-sudo apt-get install -y gcc mpich
+#!/bin/bash
+
+sudo apt-get install -y mpich

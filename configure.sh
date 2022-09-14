@@ -16,7 +16,7 @@ ${CXX} "../src/main.cpp"                                   \
     -Werror -Wall -Wextra -Wpedantic -Wconversion          \
     -O3                                                    \
     -std=c++20                                             \
-    -o "../bin/mpi-demo"                                   \
+    -o "../bin/mpidemo"                                    \
     -DMPI_ENABLED=$MPI_ENABLED
 
 echo "Compilation finished with status $?"
