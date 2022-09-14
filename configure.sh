@@ -4,9 +4,15 @@ mkdir -p build
 mkdir -p bin
 cd build
 
-export MPI_ENABLED="true"
+export MPI_ENABLED=${MPI_ENABLED:-"false"}
 
-mpicxx "../src/main.cpp"                                   \
+if [ $MPI_ENABLED==true ]; then
+    export CXX=mpicxx
+else
+    export CXX=g++
+fi
+
+${CXX} "../src/main.cpp"                                   \
     -Werror -Wall -Wextra -Wpedantic -Wconversion          \
     -O3                                                    \
     -std=c++20                                             \

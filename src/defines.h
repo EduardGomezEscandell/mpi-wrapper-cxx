@@ -16,6 +16,9 @@ enum class Os {
     error "Unsupported platform"
 #endif
 
+static_assert(std::is_same_v<bool, decltype(MPI_ENABLED)>, "MPI_ENABLED should be either 'true', 'false' or not defined");
+
+
 constexpr Os os() noexcept {
     #ifdef PLATFORM_IS_WINDOWS
         return Os::Windows;

@@ -1,7 +1,7 @@
 #include <string_view>
 #include "defines.h"
 
-#ifdef PLATFORM_IS_LINUX
+#if MPI_ENABLED==true
 #include <mpi.h>
 #endif
 
@@ -27,7 +27,7 @@ class MpiWrapper<OS, false> {
 
 };
 
-#ifdef PLATFORM_IS_LINUX
+#if defined(PLATFORM_IS_LINUX) && MPI_ENABLED
 
 template<>
 class MpiWrapper<Os::Linux, true> {
