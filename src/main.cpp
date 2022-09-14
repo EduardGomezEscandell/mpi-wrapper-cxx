@@ -81,7 +81,7 @@ void demonstrate_sendrecv() {
         Mpi::status status;
         status.MPI_TAG = mock_tag;
 
-        std::vector<int> data = {Mpi::rank(), Mpi::rank()+1, Mpi::rank()+2, Mpi::rank()+4};
+        std::vector<int> data = {Mpi::rank() + 20, Mpi::rank()+40, Mpi::rank()+60, Mpi::rank()+80};
         
         if (Mpi::rank() == sender) {
             Mpi::send(reciever, tag, data);
@@ -98,6 +98,15 @@ void demonstrate_sendrecv() {
     }
 }
 
+void demonstrate_gather() {
+    {
+        int data = Mpi::rank();
+        std::vector<int> gathered_data{};
+        Mpi::gather(Mpi::size()-1, data, gathered_data);
+        print("Rank ", Mpi::rank(), " has data ", vector_to_str(gathered_data));
+    }
+}
+
 int main() {
     demonstrate_multiprocessing();
     Mpi::barrier();
@@ -106,5 +115,8 @@ int main() {
     Mpi::barrier();
 
     demonstrate_sendrecv();
+    Mpi::barrier();
+
+    demonstrate_gather();
     Mpi::barrier();
 }
