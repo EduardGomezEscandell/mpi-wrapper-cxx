@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "defines": [
+                "MPI_ENABLED=true"
+            ],
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "gnu17",
+            "cppStandard": "c++20",
+            "includePath": ["/usr/include/x86_64-linux-gnu/mpi/"]
+        },
+        {
+            "name": "Win32",
+            "intelliSenseMode": "windows-msvc-x64",
+            "cStandard": "gnu17",
+            "cppStandard": "c++20"
+        }
+    ],
+    "version": 4
+}
