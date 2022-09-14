@@ -44,6 +44,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - uses: ilammy/msvc-dev-cmd@v1
+
       - name: Build
         run: .\configure.bat
       
