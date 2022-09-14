@@ -14,7 +14,7 @@ To compile in windows, install Microsoft Visual Studio and find the path to it. 
 ```
 MPI_ENABLED=true bash configure.sh
 ```
-Choose MPI_ENABLED between `true` or `false` to enable or disable compilation in MPI. Not that to compile with MPI you'll need to install package `mpich`.
+Choose MPI_ENABLED between `true` or `false` to enable or disable compilation in MPI. Note that to compile with MPI you'll need to install package `mpich`.
 
 # Run
 Once compiled, you can run it with:
