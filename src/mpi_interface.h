@@ -1,8 +1,8 @@
-#include <type_traits>
 #include <string>
 #include <cassert>
 
 #include "defines.h"
+#include "extra_type_traits.h"
 
 #if MPI_ENABLED==true
     #include <mpi.h>
@@ -12,17 +12,13 @@ template<Os OS, bool MpiEnabled>
 class MpiWrapper {
 };
 
-namespace ValidMpiType_internals {
-    template<typename T, typename...Args>
-    constexpr bool type_in_list() {
-        return (std::is_same_v<T, Args> || ...);
-    }
-}
-
 template<typename T>
-concept ValidMpiType = ValidMpiType_internals::type_in_list<T,
+concept ValidMpiType = AnyOf<T,
     short, unsigned short, int, unsigned int, long, unsigned long, long long, unsigned long long,
-    float, double, long double, char, signed char, unsigned char,   wchar_t, bool>();
+    float, double, long double, char, signed char, unsigned char,   wchar_t, bool>;
+
+template<typename C>
+concept ValidMpiContainer = ContiguousContainer<C> && ValidMpiType<typename container_traits<C>::data>;
 
 // Mock implementation for MPI_ENABLED = false
 template<Os OS>
@@ -46,8 +42,13 @@ class MpiWrapper<OS, false> {
     static constexpr void barrier() noexcept { }
 
     template<ValidMpiType T>
-    static constexpr void broadcast(id_type t, T&) {
-        assert(t == rank());
+    static constexpr void broadcast(id_type source, T&) {
+        assert(source == rank());
+    }
+
+    template<ValidMpiContainer T>
+    static void broadcast(id_type source, T&) {
+        assert(source == rank());
     }
 
 };
@@ -65,10 +66,19 @@ class MpiWrapper<Os::Linux, true> {
     static size_type size() noexcept;
     static id_type rank() noexcept;
     static void barrier() noexcept;
-    
+
     template<ValidMpiType T>
-    static void broadcast(id_type root, T& data) {
-        MPI_Bcast(&data, 1u, mpi_data_type<T>(), root, MPI_COMM_WORLD);
+    static void broadcast(id_type source, T& data) {
+        MPI_Bcast(&data, 1u, mpi_data_type<T>(), source, MPI_COMM_WORLD);
+    }
+
+    template<ValidMpiContainer T>
+    static void broadcast(id_type source, T& data) {
+        MPI_Bcast(&container_traits<T>::front(data),
+            static_cast<int>(container_traits<T>::size(data)),
+            mpi_data_type<typename container_traits<T>::data>(),
+            source,
+            MPI_COMM_WORLD);
     }
 
   protected:
@@ -88,7 +98,6 @@ class MpiWrapper<Os::Linux, true> {
     template<ValidMpiType T>
     static constexpr MPI_Datatype mpi_data_type() noexcept;
 };
-
 
 template<> constexpr MPI_Datatype MpiWrapper<Os::Linux, true>::mpi_data_type<char>   ()            noexcept { return MPI_CHAR; }
 template<> constexpr MPI_Datatype MpiWrapper<Os::Linux, true>::mpi_data_type<signed char>()        noexcept { return MPI_SIGNED_CHAR; }
