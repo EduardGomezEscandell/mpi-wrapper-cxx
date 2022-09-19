@@ -29,27 +29,27 @@ jobs:
       
       - name: Run
         run: |
-          rm -r tmp/ &> /dev/null
+          rm -rf tmp/ &> /dev/null
           mpirun -np 2 bin/Release/mpidemo
 
       - name: Test 1 cores
         run: |
-          rm -r tmp/ &> /dev/null
+          rm -rf tmp/ &> /dev/null
           mpirun -np 1 bin/Release/mpidemo
 
       - name: Test 2 cores
         run: |
-          rm -r tmp/ &> /dev/null
+          rm -rf tmp/ &> /dev/null
           mpirun -np 2 bin/Release/mpidemo
 
       - name: Test 4 cores
         run: |
-          rm -r tmp/ &> /dev/null
+          rm -rf tmp/ &> /dev/null
           mpirun -np 4 bin/Release/mpidemo
       
       - name: Test 8 cores
         run: |
-          rm -r tmp/ &> /dev/null
+          rm -rf tmp/ &> /dev/null
           mpirun -np 8 bin/Release/mpidemo
 
 
