@@ -20,7 +20,7 @@ jobs:
       - name: Install and upgrade dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y mpich
+          sudo apt-get install -y mpich cmake
 
       - name: Build
         run: ENABLE_MPI=true bash configure.sh
@@ -32,6 +32,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Install and upgrade dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake
 
       - name: Build
         run: bash configure.sh
