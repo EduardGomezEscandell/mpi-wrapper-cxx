@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iterator>
 #include <sstream>
+#include <algorithm>
 
 #include "mpicxx/mpi.h"
 
@@ -58,7 +59,7 @@ void demonstrate_sendrecv() {
     Mpi::tag_type tag = 500;
     Mpi::tag_type mock_tag = -1;
     {
-        Mpi::status status;
+        Mpi::status status{};
         status.MPI_TAG = mock_tag;
 
         int data = Mpi::rank();
@@ -78,7 +79,7 @@ void demonstrate_sendrecv() {
     }
     Mpi::barrier();
     {
-        Mpi::status status;
+        Mpi::status status{};
         status.MPI_TAG = mock_tag;
 
         std::vector<int> data = {Mpi::rank() + 20, Mpi::rank()+40, Mpi::rank()+60, Mpi::rank()+80};

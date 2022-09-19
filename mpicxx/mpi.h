@@ -154,7 +154,7 @@ class MpiWrapper<OS, false> {
     static constexpr void barrier() noexcept { }
 
     template<mpi::ValidType T>
-    static void send(id_type destination, tag_type tag, T& data) {
+    static void send([[maybe_unused]] id_type destination, tag_type tag, T& data) {
         assert(destination == rank());
         
         auto it = sendrcv_buffer.find(tag);
@@ -168,7 +168,7 @@ class MpiWrapper<OS, false> {
     }
 
     template<mpi::ValidContainer T>
-    static void send(id_type destination, tag_type tag, T& data) {
+    static void send([[maybe_unused]] id_type destination, tag_type tag, T& data) {
         assert(destination == rank());
         
         auto it = sendrcv_buffer.find(tag);
@@ -185,7 +185,7 @@ class MpiWrapper<OS, false> {
     }
 
     template<mpi::ValidType T>
-    static void recv(id_type source, tag_type tag, T& data, status& status) {
+    static void recv([[maybe_unused]] id_type source, tag_type tag, T& data, status& status) {
         assert(source == rank());
         auto it = sendrcv_buffer.find(tag);
         assert(it != sendrcv_buffer.end());
@@ -196,7 +196,7 @@ class MpiWrapper<OS, false> {
     }
 
     template<mpi::ValidContainer T>
-    static void recv(id_type source, tag_type tag, T& data, status& status) {
+    static void recv([[maybe_unused]] id_type source, tag_type tag, T& data, status& status) {
         assert(source == rank());
         auto it = sendrcv_buffer.find(tag);
         assert(it != sendrcv_buffer.end());
@@ -211,17 +211,17 @@ class MpiWrapper<OS, false> {
     }
 
     template<mpi::ValidType T>
-    static constexpr void broadcast(id_type source, T&) {
+    static constexpr void broadcast([[maybe_unused]] id_type source, T&) {
         assert(source == rank());
     }
 
     template<mpi::ValidContainer T>
-    static void broadcast(id_type source, T&) {
+    static void broadcast([[maybe_unused]] id_type source, T&) {
         assert(source == rank());
     }
     
     template<mpi::ValidContainer C>
-    static void gather(id_type destination, typename container_traits<C>::data& data, C& output) noexcept {        
+    static void gather([[maybe_unused]] id_type destination, typename container_traits<C>::data& data, C& output) noexcept {        
         assert (rank() == destination);
         container_traits<C>::try_resize(output, size());
         container_traits<C>::front(output) = data;
