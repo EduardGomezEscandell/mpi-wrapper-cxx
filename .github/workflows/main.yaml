@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+            submodules: 'true'
 
       - name: Install and upgrade dependencies
         run: |
@@ -45,6 +47,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+            submodules: 'true'
 
       - name: Install and upgrade dependencies
         run: |
@@ -64,6 +68,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+            submodules: 'true'
 
       - uses: ilammy/msvc-dev-cmd@v1
 
