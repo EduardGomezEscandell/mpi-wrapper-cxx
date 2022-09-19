@@ -1,6 +1,11 @@
 #include <string>
 #include <cassert>
 #include <map>
+#include <numeric>
+#include <execution>
+
+#include <string>
+#include <sstream>
 
 #include "defines.h"
 #include "extra_type_traits.h"
@@ -227,6 +232,13 @@ class MpiWrapper<OS, false> {
         container_traits<C>::front(output) = data;
     }
     
+    template<mpi::ValidContainer C>
+    static void gather([[maybe_unused]] id_type destination, C const& data, C& output) noexcept {
+        assert (rank() == destination);
+        const std::size_t msg_size = data.size();
+        container_traits<C>::try_resize(output, msg_size);
+        memcpy(container_traits<C>::pointer(output), container_traits<C>::pointer(data), msg_size * sizeof(typename container_traits<C>::data));
+    }
 
 private:
     static std::map<tag_type, mpi::mock::buffer_entry> sendrcv_buffer;
@@ -258,25 +270,25 @@ class MpiWrapper<Os::Linux, true> {
     static size_type size() noexcept
     {
         int world_size;
-        MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+        MPI_Comm_size(handle(), &world_size);
         return static_cast<std::size_t>(world_size);
     }
 
     static id_type rank() noexcept
     {
         int world_rank;
-        MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+        MPI_Comm_rank(handle(), &world_rank);
         return world_rank;
     }
 
     static void barrier() noexcept
     {
-        MPI_Barrier(MPI_COMM_WORLD);
+        MPI_Barrier(handle());
     }
 
     template<mpi::ValidType T>
     static void send(id_type destination, tag_type tag, T& data) {
-        MPI_Send(&data, 1u, mpi_data_type<T>(), destination, tag, MPI_COMM_WORLD);
+        MPI_Send(&data, 1u, mpi_data_type<T>(), destination, tag, handle());
     }
 
     template<mpi::ValidContainer T>
@@ -284,12 +296,12 @@ class MpiWrapper<Os::Linux, true> {
         MPI_Send(&container_traits<T>::front(data),
             static_cast<size_type>(container_traits<T>::size(data)),
             mpi_data_type<typename container_traits<T>::data>(),
-            destination, tag, MPI_COMM_WORLD);
+            destination, tag, handle());
     }
 
     template<mpi::ValidType T>
     static void recv(id_type source, tag_type tag, T& data, status& status) {
-        MPI_Recv(&data, 1u, mpi_data_type<T>(), source, tag, MPI_COMM_WORLD, &status);
+        MPI_Recv(&data, 1u, mpi_data_type<T>(), source, tag, handle(), &status);
     }
 
     template<mpi::ValidContainer T>
@@ -297,12 +309,12 @@ class MpiWrapper<Os::Linux, true> {
         MPI_Recv(&container_traits<T>::front(data),
             static_cast<size_type>(container_traits<T>::size(data)),
             mpi_data_type<typename container_traits<T>::data>(),
-            source, tag, MPI_COMM_WORLD, &status);
+            source, tag, handle(), &status);
     }
 
     template<mpi::ValidType T>
     static void broadcast(id_type source, T& data) {
-        MPI_Bcast(&data, 1u, mpi_data_type<T>(), source, MPI_COMM_WORLD);
+        MPI_Bcast(&data, 1u, mpi_data_type<T>(), source, handle());
     }
 
     template<mpi::ValidContainer T>
@@ -311,22 +323,49 @@ class MpiWrapper<Os::Linux, true> {
             static_cast<size_type>(container_traits<T>::size(data)),
             mpi_data_type<typename container_traits<T>::data>(),
             source,
-            MPI_COMM_WORLD);
+            handle());
     }
 
     template<mpi::ValidContainer C>
-    static void gather(id_type destination, typename container_traits<C>::data& data, C& output) noexcept {        
+    static void gather(id_type destination, typename container_traits<C>::data data, C& output) noexcept {        
         using T = typename container_traits<C>::data;
         T* recv = nullptr;
         
         if (rank() == destination) {
             container_traits<C>::try_resize(output, size());
-            recv = &container_traits<C>::front(output);
+            recv = container_traits<C>::pointer(output);
         }
 
         MPI_Gather(&data, 1, mpi_data_type<T>(),
                     recv, 1, mpi_data_type<T>(),
-                    destination, MPI_COMM_WORLD);
+                    destination, handle());
+    }
+
+    template<mpi::ValidContainer C>
+    static void gather(id_type destination, C const& data, C& output) noexcept {
+        using T = typename container_traits<C>::data;
+        
+        const size_type msg_size = static_cast<size_type>(container_traits<C>::size(data));
+        T const* send_ptr = container_traits<C>::pointer(data);
+        
+#ifndef DNDEBUG
+        {   // Ensuring all senders send the same amount of bytes
+            std::vector<size_type> sizes_{};
+            gather(destination, static_cast<size_type>(data.size()), sizes_);
+            for(std::size_t rank=0; rank != sizes_.size(); ++rank) {
+                assert(sizes_.at(rank) == sizes_.at(destination) && "All ranks must send have the same amount of elements!");
+            }
+        }
+#endif
+
+        if(rank() == destination) {
+            container_traits<C>::try_resize(output, msg_size * size());
+        }
+        T* recv_ptr = container_traits<C>::pointer(output);
+
+        MPI_Gather(send_ptr, msg_size, mpi_data_type<T>(),
+                   recv_ptr, msg_size, mpi_data_type<T>(),
+                   destination, handle());
     }
 
   protected:
@@ -340,6 +379,10 @@ class MpiWrapper<Os::Linux, true> {
             MPI_Finalize();
         }
     };
+
+    static constexpr MPI_Comm handle() noexcept {
+        return MPI_COMM_WORLD;
+    }
 
     static mpi_env env;
 
@@ -367,6 +410,5 @@ template<> constexpr MPI_Datatype MpiWrapper<Os::Linux, true>::mpi_data_type<lon
 template<> constexpr MPI_Datatype MpiWrapper<Os::Linux, true>::mpi_data_type<bool>()               noexcept { return MPI_C_BOOL; }
 
 #endif
-
 
 using Mpi = MpiWrapper<os(), mpi_enabled()>;

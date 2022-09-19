@@ -24,6 +24,10 @@ void print(Args...args) {
 }
 
 void demonstrate_multiprocessing() {
+    if(Mpi::rank() == 0) {
+        std::cout << "\nDemonstrating multiprocessing" << std::endl;
+    }
+    Mpi::barrier();
     // Showing barrier
     if (Mpi::rank() == Mpi::size()-1) {
         /* We make the last rank print, this way we'll see if the
@@ -37,6 +41,10 @@ void demonstrate_multiprocessing() {
 }
 
 void demonstrate_broadcast() {
+    if(Mpi::rank() == 0) {
+        std::cout << "\nDemonstrating broadcast" << std::endl;
+    }
+    Mpi::barrier();
     {
         int data = Mpi::rank() + 5;
         const auto orig = data;
@@ -53,6 +61,15 @@ void demonstrate_broadcast() {
 }
 
 void demonstrate_sendrecv() {
+    if(Mpi::size() < 2) {
+        std::cout << "Skipping sendrecv demo" << std::endl;
+        Mpi::barrier();
+        return; // Need diferent sender and reciever!
+    }
+    if(Mpi::rank() == 0) {
+        std::cout << "\nDemonstrating sendrecv" << std::endl;
+    }
+    Mpi::barrier();
     Mpi::id_type sender = 0;
     Mpi::id_type reciever = Mpi::size() - 1;
     
@@ -100,11 +117,22 @@ void demonstrate_sendrecv() {
 }
 
 void demonstrate_gather() {
+    if(Mpi::rank() == 0) {
+        std::cout << "\nDemonstrating gather" << std::endl;
+    }
+    Mpi::barrier();
     {
         int data = Mpi::rank();
         std::vector<int> gathered_data{};
         Mpi::gather(Mpi::size()-1, data, gathered_data);
         print("Rank ", Mpi::rank(), " has data ", vector_to_str(gathered_data));
+    }
+    Mpi::barrier();
+    {
+        std::vector<int> data (5u, Mpi::rank() + 10);
+        std::vector<int> gathered_data{};
+        Mpi::gather(Mpi::size()-1, data, gathered_data);
+        print("Rank ", Mpi::rank(), " sent ",  vector_to_str(data), " and recieved ", vector_to_str(gathered_data));
     }
 }
 
