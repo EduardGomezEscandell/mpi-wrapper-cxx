@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.9)
 
 project(mpi_wsl_demo LANGUAGES CXX)
 set (CMAKE_CXX_STANDARD 20)
@@ -28,6 +28,14 @@ if (SANITIZE)
     add_compile_options(-fconcepts)
   endif()
 endif()
+
+# Linking MPI
+if(${MPI_ENABLED} STREQUAL "true")
+	find_package(MPI REQUIRED)
+    include_directories(SYSTEM ${MPI_INCLUDE_PATH})
+    add_definitions(-DOMPI_SKIP_MPICXX)
+endif()
+
 
 add_subdirectory(external_libraries)
 add_subdirectory(mpicxx)
