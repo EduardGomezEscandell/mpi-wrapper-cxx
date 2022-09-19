@@ -15,6 +15,8 @@ First you need to install dependencies:
 ```
 sudo apt-get install cmake mpich
 ```
+Make sure you GCC version is at least 11.2. Otherwise you might need to add some compiler flags to allow for newer C++ features.
+
 
 Then you can compile, optionally enabling or disabling MPI:
 ```
