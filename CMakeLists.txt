@@ -9,14 +9,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_ROOT}/bin/${CMAKE_BUILD_TYPE}")
 message("Build type: ${CMAKE_BUILD_TYPE}")
 message("Build MPI: ${MPI_ENABLED}")
 
-# add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 add_compile_definitions(MPI_ENABLED=${MPI_ENABLED})
-
 
 if(MSVC)
   add_compile_options(/W4 /WX)
 else()
   add_compile_options(-Wall -Wextra -Wpedantic -Wconversion -Werror)
+  add_compile_options(-fconcepts)
 endif()
 
 add_subdirectory(mpicxx)
