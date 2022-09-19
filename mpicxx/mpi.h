@@ -154,7 +154,7 @@ class MpiWrapper<OS, false> {
     static constexpr void barrier() noexcept { }
 
     template<mpi::ValidType T>
-    static void send(id_type destination, tag_type tag, T& data) {
+    static void send([[maybe_unused]] id_type destination, tag_type tag, T& data) {
         assert(destination == rank());
         
         auto it = sendrcv_buffer.find(tag);
@@ -168,7 +168,7 @@ class MpiWrapper<OS, false> {
     }
 
     template<mpi::ValidContainer T>
-    static void send(id_type destination, tag_type tag, T& data) {
+    static void send([[maybe_unused]] id_type destination, tag_type tag, T& data) {
         assert(destination == rank());
         
         auto it = sendrcv_buffer.find(tag);
@@ -185,7 +185,7 @@ class MpiWrapper<OS, false> {
     }
 
     template<mpi::ValidType T>
-    static void recv(id_type source, tag_type tag, T& data, status& status) {
+    static void recv([[maybe_unused]] id_type source, tag_type tag, T& data, status& status) {
         assert(source == rank());
         auto it = sendrcv_buffer.find(tag);
         assert(it != sendrcv_buffer.end());
@@ -196,7 +196,7 @@ class MpiWrapper<OS, false> {
     }
 
     template<mpi::ValidContainer T>
-    static void recv(id_type source, tag_type tag, T& data, status& status) {
+    static void recv([[maybe_unused]] id_type source, tag_type tag, T& data, status& status) {
         assert(source == rank());
         auto it = sendrcv_buffer.find(tag);
         assert(it != sendrcv_buffer.end());
@@ -211,17 +211,17 @@ class MpiWrapper<OS, false> {
     }
 
     template<mpi::ValidType T>
-    static constexpr void broadcast(id_type source, T&) {
+    static constexpr void broadcast([[maybe_unused]] id_type source, T&) {
         assert(source == rank());
     }
 
     template<mpi::ValidContainer T>
-    static void broadcast(id_type source, T&) {
+    static void broadcast([[maybe_unused]] id_type source, T&) {
         assert(source == rank());
     }
     
     template<mpi::ValidContainer C>
-    static void gather(id_type destination, typename container_traits<C>::data& data, C& output) noexcept {        
+    static void gather([[maybe_unused]] id_type destination, typename container_traits<C>::data& data, C& output) noexcept {        
         assert (rank() == destination);
         container_traits<C>::try_resize(output, size());
         container_traits<C>::front(output) = data;
@@ -247,10 +247,32 @@ class MpiWrapper<Os::Linux, true> {
     using size_type = mpi::size_type;
     using tag_type = mpi::tag_type;
 
-    static std::string processor_name() noexcept;
-    static size_type size() noexcept;
-    static id_type rank() noexcept;
-    static void barrier() noexcept;
+    static std::string processor_name() noexcept 
+    {
+        char name[MPI_MAX_PROCESSOR_NAME];
+        int len;
+        MPI_Get_processor_name(name, &len);
+        return name;
+    }
+
+    static size_type size() noexcept
+    {
+        int world_size;
+        MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+        return static_cast<std::size_t>(world_size);
+    }
+
+    static id_type rank() noexcept
+    {
+        int world_rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+        return world_rank;
+    }
+
+    static void barrier() noexcept
+    {
+        MPI_Barrier(MPI_COMM_WORLD);
+    }
 
     template<mpi::ValidType T>
     static void send(id_type destination, tag_type tag, T& data) {
@@ -324,6 +346,8 @@ class MpiWrapper<Os::Linux, true> {
     template<mpi::ValidType T>
     static constexpr MPI_Datatype mpi_data_type() noexcept;
 };
+
+inline MpiWrapper<Os::Linux, true>::mpi_env MpiWrapper<Os::Linux, true>::env{};
 
 template<> constexpr MPI_Datatype MpiWrapper<Os::Linux, true>::mpi_data_type<char>   ()            noexcept { return MPI_CHAR; }
 template<> constexpr MPI_Datatype MpiWrapper<Os::Linux, true>::mpi_data_type<signed char>()        noexcept { return MPI_SIGNED_CHAR; }

@@ -1,8 +1,9 @@
 #include <iostream>
 #include <iterator>
 #include <sstream>
+#include <algorithm>
 
-#include "mpi_interface.h"
+#include "mpicxx/mpi.h"
 
 template<typename T>
 std::string vector_to_str(std::vector<T> const& container) {
@@ -58,7 +59,7 @@ void demonstrate_sendrecv() {
     Mpi::tag_type tag = 500;
     Mpi::tag_type mock_tag = -1;
     {
-        Mpi::status status;
+        Mpi::status status{};
         status.MPI_TAG = mock_tag;
 
         int data = Mpi::rank();
@@ -78,7 +79,7 @@ void demonstrate_sendrecv() {
     }
     Mpi::barrier();
     {
-        Mpi::status status;
+        Mpi::status status{};
         status.MPI_TAG = mock_tag;
 
         std::vector<int> data = {Mpi::rank() + 20, Mpi::rank()+40, Mpi::rank()+60, Mpi::rank()+80};

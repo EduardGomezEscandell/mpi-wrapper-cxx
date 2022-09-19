@@ -20,24 +20,29 @@ jobs:
       - name: Install and upgrade dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y mpich
+          sudo apt-get install -y mpich cmake
 
       - name: Build
         run: ENABLE_MPI=true bash configure.sh
       
       - name: Run
-        run: mpirun -np 2 bin/mpidemo
+        run: mpirun -np 2 bin/Release/mpidemo
 
   ubuntu-single-thread:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install and upgrade dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake
+
       - name: Build
         run: bash configure.sh
 
       - name: Run
-        run: bin/mpidemo
+        run: bin/Release/mpidemo
 
   windows-single-thread:
     runs-on: windows-latest
@@ -50,5 +55,5 @@ jobs:
         run: .\configure.bat
       
       - name: Run
-        run: .\bin\mpidemo.exe
+        run: .\bin\Release\mpidemo.exe
   

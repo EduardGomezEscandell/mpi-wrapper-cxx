@@ -11,10 +11,13 @@
             },
             "options": {
                 "cwd": "${workspaceFolder}",
+                "env": {
+                    "BUILD_TYPE": "${input:BuildType}"
+                }
             },
             "windows": {
                 "problemMatcher": "$msCompile",
-                "command": ".\\configure.bat",
+                "command": ".\\configure.bat"
             },
             "linux": {
                 "problemMatcher": "$gcc",
@@ -28,6 +31,18 @@
                     }
                 }
             }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "BuildType",
+            "description": "Build type",
+            "default": "Release",
+            "options": [
+                "Release",
+                "Debug"
+            ],
+            "type": "pickString"
         }
     ]
 }

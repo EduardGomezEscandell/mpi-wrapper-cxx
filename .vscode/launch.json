@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C++ Launch (Linux)",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/bin/Debug/mpidemo",
+            "externalConsole": false,
+            "type": "cppdbg",
+            "MIMode": "gdb",
+        }
+    ]
+}

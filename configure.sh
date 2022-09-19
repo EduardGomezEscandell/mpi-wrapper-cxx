@@ -1,22 +1,23 @@
-#!/bin/bash
+#!/bin/bash -e
 
-mkdir -p build
-mkdir -p bin
-cd build
-
+# Settings
 export MPI_ENABLED=${MPI_ENABLED:-"false"}
+export BUILD_TYPE=${BUILD_TYPE:-Release}
 
+# Chosing compiler
 if [ ${MPI_ENABLED} = "true" ]; then
+    export CC=mpicxx
     export CXX=mpicxx
 else
+    export CC=gcc
     export CXX=g++
 fi
 
-${CXX} "../src/main.cpp" "../src/mpi_interface.cpp"        \
-    -Werror -Wall -Wextra -Wpedantic -Wconversion          \
-    -O3                                                    \
-    -std=c++2a                                             \
-    -o "../bin/mpidemo"                                    \
+cmake                                   \
+    -S.                                 \
+    -DCMAKE_BUILD_TYPE=${BUILD_TYPE}    \
+    -DPROJECT_ROOT=`pwd`                \
+    -B"build/${BUILD_TYPE}"             \
     -DMPI_ENABLED=$MPI_ENABLED
 
-echo "Compilation finished with status $?"
+cmake --build "build/${BUILD_TYPE}" -- -j$(nproc)
