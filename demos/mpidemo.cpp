@@ -1,8 +1,9 @@
 #include <iostream>
 #include <iterator>
 #include <sstream>
+#include <algorithm>
 
-#include "mpi_interface.h"
+#include "mpicxx/mpi.h"
 
 template<typename T>
 std::string vector_to_str(std::vector<T> const& container) {
@@ -58,7 +59,7 @@ void demonstrate_sendrecv() {
     Mpi::tag_type tag = 500;
     Mpi::tag_type mock_tag = -1;
     {
-        Mpi::status status;
+        Mpi::status status{};
         status.MPI_TAG = mock_tag;
 
         int data = Mpi::rank();
@@ -78,10 +79,10 @@ void demonstrate_sendrecv() {
     }
     Mpi::barrier();
     {
-        Mpi::status status;
+        Mpi::status status{};
         status.MPI_TAG = mock_tag;
 
-        std::vector<int> data = {Mpi::rank(), Mpi::rank()+1, Mpi::rank()+2, Mpi::rank()+4};
+        std::vector<int> data = {Mpi::rank() + 20, Mpi::rank()+40, Mpi::rank()+60, Mpi::rank()+80};
         
         if (Mpi::rank() == sender) {
             Mpi::send(reciever, tag, data);
@@ -98,6 +99,15 @@ void demonstrate_sendrecv() {
     }
 }
 
+void demonstrate_gather() {
+    {
+        int data = Mpi::rank();
+        std::vector<int> gathered_data{};
+        Mpi::gather(Mpi::size()-1, data, gathered_data);
+        print("Rank ", Mpi::rank(), " has data ", vector_to_str(gathered_data));
+    }
+}
+
 int main() {
     demonstrate_multiprocessing();
     Mpi::barrier();
@@ -106,5 +116,8 @@ int main() {
     Mpi::barrier();
 
     demonstrate_sendrecv();
+    Mpi::barrier();
+
+    demonstrate_gather();
     Mpi::barrier();
 }
