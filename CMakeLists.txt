@@ -11,11 +11,22 @@ message("Build MPI: ${MPI_ENABLED}")
 
 add_compile_definitions(MPI_ENABLED=${MPI_ENABLED})
 
+# Warnings
 if(MSVC)
   add_compile_options(/W4 /WX)
 else()
   add_compile_options(-Wall -Wextra -Wpedantic -Wconversion -Werror)
-  add_compile_options(-fconcepts)
+endif()
+
+# Sanitizers
+if (SANITIZE)
+  if(MSVC)
+    # TODO
+  else()
+    add_compile_options(-fsanitize=address)
+    add_link_options(-fsanitize=address)
+    add_compile_options(-fconcepts)
+  endif()
 endif()
 
 add_subdirectory(mpicxx)

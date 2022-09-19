@@ -27,7 +27,7 @@
                 ],
                 "options": {
                     "env": {
-                        "MPI_ENABLED": "true"
+                        "MPI_ENABLED": "${input:EnableMPI}"
                     }
                 }
             }
@@ -37,10 +37,20 @@
         {
             "id": "BuildType",
             "description": "Build type",
-            "default": "Release",
+            "default": "Debug",
             "options": [
                 "Release",
                 "Debug"
+            ],
+            "type": "pickString"
+        },
+        {
+            "id": "EnableMPI",
+            "description": "Enable MPI",
+            "default": "true",
+            "options": [
+                "true",
+                "false"
             ],
             "type": "pickString"
         }
