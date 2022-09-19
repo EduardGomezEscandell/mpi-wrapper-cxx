@@ -247,10 +247,32 @@ class MpiWrapper<Os::Linux, true> {
     using size_type = mpi::size_type;
     using tag_type = mpi::tag_type;
 
-    static std::string processor_name() noexcept;
-    static size_type size() noexcept;
-    static id_type rank() noexcept;
-    static void barrier() noexcept;
+    static std::string processor_name() noexcept 
+    {
+        char name[MPI_MAX_PROCESSOR_NAME];
+        int len;
+        MPI_Get_processor_name(name, &len);
+        return name;
+    }
+
+    static size_type size() noexcept
+    {
+        int world_size;
+        MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+        return static_cast<std::size_t>(world_size);
+    }
+
+    static id_type rank() noexcept
+    {
+        int world_rank;
+        MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+        return world_rank;
+    }
+
+    static void barrier() noexcept
+    {
+        MPI_Barrier(MPI_COMM_WORLD);
+    }
 
     template<mpi::ValidType T>
     static void send(id_type destination, tag_type tag, T& data) {
@@ -324,6 +346,8 @@ class MpiWrapper<Os::Linux, true> {
     template<mpi::ValidType T>
     static constexpr MPI_Datatype mpi_data_type() noexcept;
 };
+
+inline MpiWrapper<Os::Linux, true>::mpi_env MpiWrapper<Os::Linux, true>::env{};
 
 template<> constexpr MPI_Datatype MpiWrapper<Os::Linux, true>::mpi_data_type<char>   ()            noexcept { return MPI_CHAR; }
 template<> constexpr MPI_Datatype MpiWrapper<Os::Linux, true>::mpi_data_type<signed char>()        noexcept { return MPI_SIGNED_CHAR; }

@@ -2,7 +2,7 @@
 #include <iterator>
 #include <sstream>
 
-#include "mpi_interface.h"
+#include "mpicxx/mpi.h"
 
 template<typename T>
 std::string vector_to_str(std::vector<T> const& container) {

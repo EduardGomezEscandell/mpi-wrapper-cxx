@@ -10,11 +10,11 @@
                 "clear": true
             },
             "options": {
-                "cwd": "${workspaceFolder}",
+                "cwd": "${workspaceFolder}"
             },
             "windows": {
                 "problemMatcher": "$msCompile",
-                "command": ".\\configure.bat",
+                "command": ".\\configure.bat"
             },
             "linux": {
                 "problemMatcher": "$gcc",
@@ -24,10 +24,20 @@
                 ],
                 "options": {
                     "env": {
-                        "MPI_ENABLED": "true"
+                        "MPI_ENABLED": "true",
+                        "BUILD_TYPE": "${input:BuildType}"
                     }
                 }
             }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "BuildType",
+            "description": "Build type",
+            "default": "Release",
+            "options":["Release","Debug"],
+            "type": "pickString"
         }
     ]
 }
