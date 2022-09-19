@@ -28,6 +28,19 @@ jobs:
       - name: Run
         run: mpirun -np 2 bin/Release/mpidemo
 
+      - name: Test 1 cores
+        run: mpirun -np 1 ./bin/Release/test
+      
+      - name: Test 2 cores
+        run: mpirun -np 2 ./bin/Release/test
+
+      - name: Test 4 cores
+        run: mpirun -np 4 ./bin/Release/test
+      
+      - name: Test 8 cores
+        run: mpirun -np 8 ./bin/Release/test
+      
+
   ubuntu-single-thread:
     runs-on: ubuntu-latest
     steps:
@@ -44,6 +57,9 @@ jobs:
       - name: Run
         run: bin/Release/mpidemo
 
+      - name: Test
+        run: ./bin/Release/test
+
   windows-single-thread:
     runs-on: windows-latest
     steps:
@@ -57,3 +73,5 @@ jobs:
       - name: Run
         run: .\bin\Release\mpidemo.exe
   
+      - name: Test
+        run: .\bin\Release\test.exe

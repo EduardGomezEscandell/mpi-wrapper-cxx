@@ -29,8 +29,10 @@ if (SANITIZE)
   endif()
 endif()
 
+add_subdirectory(external_libraries)
 add_subdirectory(mpicxx)
 add_subdirectory(demos)
+add_subdirectory(test)
 
 add_custom_target(
     copy-compile-commands ALL
