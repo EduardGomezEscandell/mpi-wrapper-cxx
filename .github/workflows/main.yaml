@@ -22,7 +22,7 @@ jobs:
       - name: Install and upgrade dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y mpich cmake
+          sudo apt-get install -y cmake g++ mpich
 
       - name: Build
         run: ENABLE_MPI=true bash configure.sh
@@ -53,7 +53,7 @@ jobs:
       - name: Install and upgrade dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake
+          sudo apt-get install -y cmake g++
 
       - name: Build
         run: bash configure.sh
