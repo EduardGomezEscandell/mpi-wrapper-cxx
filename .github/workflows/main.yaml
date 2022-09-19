@@ -26,7 +26,7 @@ jobs:
         run: ENABLE_MPI=true bash configure.sh
       
       - name: Run
-        run: mpirun -np 2 bin/mpidemo
+        run: mpirun -np 2 bin/Release/mpidemo
 
   ubuntu-single-thread:
     runs-on: ubuntu-latest
@@ -42,7 +42,7 @@ jobs:
         run: bash configure.sh
 
       - name: Run
-        run: bin/mpidemo
+        run: bin/Release/mpidemo
 
   windows-single-thread:
     runs-on: windows-latest
@@ -55,5 +55,5 @@ jobs:
         run: .\configure.bat
       
       - name: Run
-        run: .\bin\mpidemo.exe
+        run: .\bin\Release\mpidemo.exe
   
