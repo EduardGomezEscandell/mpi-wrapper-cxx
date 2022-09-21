@@ -1,9 +1,10 @@
 # pragma once
 
-#include <type_traits>
-
-#include <vector>
 #include <array>
+#include <cassert>
+#include <string>
+#include <type_traits>
+#include <vector>
 
 // Returns true if T is the same type as any of Args
 template<typename T, typename...Args>

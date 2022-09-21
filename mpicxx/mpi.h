@@ -308,7 +308,7 @@ class MpiWrapper<Os::Linux, true> {
 
     template<mpi::ValidContainer T>
     static void recv(id_type source, tag_type tag, T& data, status& status) {
-        MPI_Recv(&container_traits<T>::front(data),
+        MPI_Recv(container_traits<T>::pointer(data),
             static_cast<size_type>(container_traits<T>::size(data)),
             mpi_data_type<typename container_traits<T>::data>(),
             source, tag, handle(), &status);
@@ -321,7 +321,7 @@ class MpiWrapper<Os::Linux, true> {
 
     template<mpi::ValidContainer T>
     static void broadcast(id_type source, T& data) {
-        MPI_Bcast(&container_traits<T>::front(data),
+        MPI_Bcast(container_traits<T>::pointer(data),
             static_cast<size_type>(container_traits<T>::size(data)),
             mpi_data_type<typename container_traits<T>::data>(),
             source,
