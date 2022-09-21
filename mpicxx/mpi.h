@@ -154,7 +154,7 @@ class MpiWrapper<OS, false> {
         return 0;
     }
     
-    static constexpr std::string processor_name() noexcept {
+    static std::string processor_name() noexcept {
         return "MockMpiProcessor";
     }
 
