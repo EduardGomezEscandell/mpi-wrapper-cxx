@@ -228,7 +228,7 @@ class MpiWrapper<OS, false> {
     }
     
     template<mpi::ValidContainer C>
-    static void gather([[maybe_unused]] id_type destination, typename container_traits<C>::data& data, C& output) noexcept {        
+    static void gather([[maybe_unused]] id_type destination, typename container_traits<C>::data data, C& output) noexcept {        
         assert (rank() == destination);
         container_traits<C>::try_resize(output, size());
         container_traits<C>::front(output) = data;
