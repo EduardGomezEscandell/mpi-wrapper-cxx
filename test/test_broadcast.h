@@ -4,11 +4,8 @@
 
 #include "mpicxx/mpi.h"
 
-
-#include <iostream>
-
 TEST_CASE_TEMPLATE("BroadcastFirst", T, bool, int, unsigned, char, long long, float, double)
-{ 
+{
     constexpr auto root_v = static_cast<T>(1);
     constexpr auto other_v = static_cast<T>(2);
 
@@ -25,7 +22,7 @@ TEST_CASE_TEMPLATE("BroadcastFirst", T, bool, int, unsigned, char, long long, fl
 }
 
 TEST_CASE_TEMPLATE("BroadcastLast", T, bool, int, unsigned, char, long long, float, double)
-{ 
+{
     constexpr auto root_v = static_cast<T>(1);
     constexpr auto other_v = static_cast<T>(2);
 
