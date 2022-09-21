@@ -4,57 +4,60 @@
 
 #include "mpicxx/mpi.h"
 
-TEST_CASE_TEMPLATE("BroadcastFirst", T, bool, int, unsigned, char, long long, float, double)
+TEST_CASE_TEMPLATE("BroadcastFirst", T, int, unsigned, char, long long, float, double)
 {
+    const mpi::id_type root = 0;
     constexpr auto root_v = static_cast<T>(1);
     constexpr auto other_v = static_cast<T>(2);
 
     T data = static_cast<T>(0);
-    if (Mpi::rank() == 0) {
+    if (Mpi::rank() == root) {
         data = root_v;
     } else {
         data = other_v;
     }
 
-    Mpi::broadcast(0, data);
+    Mpi::broadcast(root, data);
 
     CHECK_EQ(data, root_v);
 }
 
-TEST_CASE_TEMPLATE("BroadcastLast", T, bool, int, unsigned, char, long long, float, double)
+TEST_CASE_TEMPLATE("BroadcastLast", T, int, unsigned, char, long long, float, double)
 {
+    const mpi::id_type root = Mpi::size() - 1;
     constexpr auto root_v = static_cast<T>(1);
     constexpr auto other_v = static_cast<T>(2);
 
     T data = static_cast<T>(0);
-    if (Mpi::rank() == Mpi::size() - 1) {
+    if (Mpi::rank() == root) {
         data = root_v;
     } else {
         data = other_v;
     }
 
-    Mpi::broadcast(0, data);
+    Mpi::broadcast(root, data);
 
     CHECK_EQ(data, root_v);
 }
 
-TEST_CASE_TEMPLATE("BroadcastMiddle", T, bool, int, unsigned, char, long long, float, double)
+TEST_CASE_TEMPLATE("BroadcastMiddle", T, int, unsigned, char, long long, float, double)
 { 
     if (Mpi::size() < 3 ) {
         return; // Skipping
     }
 
+    const mpi::id_type root = 2;
     constexpr auto root_v = static_cast<T>(1);
     constexpr auto other_v = static_cast<T>(2);
 
     T data = static_cast<T>(0);
-    if (Mpi::rank() == 2) {
+    if (Mpi::rank() == root) {
         data = root_v;
     } else {
         data = other_v;
     }
 
-    Mpi::broadcast(0, data);
+    Mpi::broadcast(root, data);
 
     CHECK_EQ(data, root_v);
 }
@@ -79,7 +82,7 @@ TEST_CASE_TEMPLATE("VectorBroadcastFirst", T, int, unsigned, char, long long, fl
 {
     const Mpi::id_type root = 0;
     const T value_root{1};
-    auto data = SetupContainerBroadcast<std::vector<T>>(root, 1, 2);
+    auto data = SetupContainerBroadcast<std::vector<T>>(root, T{1}, T{2});
 
     Mpi::broadcast(root, data);
 
@@ -93,7 +96,7 @@ TEST_CASE_TEMPLATE("VectorBroadcastLast", T, int, unsigned, char, long long, flo
 {
     const Mpi::id_type root = Mpi::size() - 1;
     const T value_root{1};
-    auto data = SetupContainerBroadcast<std::vector<T>>(root, 1, 2);
+    auto data = SetupContainerBroadcast<std::vector<T>>(root, T{1}, T{2});
 
     Mpi::broadcast(root, data);
 
@@ -111,7 +114,7 @@ TEST_CASE_TEMPLATE("VectorBroadcastMiddle", T, int, unsigned, char, long long, f
 
     const Mpi::id_type root = 2;
     const T value_root{1};
-    auto data = SetupContainerBroadcast<std::vector<T>>(root, 1, 2);
+    auto data = SetupContainerBroadcast<std::vector<T>>(root, T{1}, T{2});
 
     Mpi::broadcast(root, data);
 
@@ -121,11 +124,11 @@ TEST_CASE_TEMPLATE("VectorBroadcastMiddle", T, int, unsigned, char, long long, f
     CHECK_EQ(data[2], value_root);
 }
 
-TEST_CASE_TEMPLATE("ArrayBroadcastFirst", T, bool, int, unsigned, char, long long, float, double)
+TEST_CASE_TEMPLATE("ArrayBroadcastFirst", T, int, unsigned, char, long long, float, double)
 {
     const Mpi::id_type root = 0;
     const T value_root{1};
-    auto data = SetupContainerBroadcast<std::array<T, 3>>(root, 1, 2);
+    auto data = SetupContainerBroadcast<std::array<T, 3>>(root, T{1}, T{2});
 
     Mpi::broadcast(root, data);
 
@@ -139,7 +142,7 @@ TEST_CASE_TEMPLATE("ArrayBroadcastLast", T, int, unsigned, char, long long, floa
 {
     const Mpi::id_type root = Mpi::size() - 1;
     const T value_root{1};
-    auto data = SetupContainerBroadcast<std::array<T, 3>>(root, 1, 2);
+    auto data = SetupContainerBroadcast<std::array<T, 3>>(root, T{1}, T{2});
 
     Mpi::broadcast(root, data);
 
@@ -157,7 +160,7 @@ TEST_CASE_TEMPLATE("ArrayBroadcastMiddle", T, int, unsigned, char, long long, fl
 
     const Mpi::id_type root = 2;
     const T value_root{1};
-    auto data = SetupContainerBroadcast<std::array<T, 3>>(root, 1, 2);
+    auto data = SetupContainerBroadcast<std::array<T, 3>>(root, T{1}, T{2});
     
     Mpi::broadcast(root, data);
 
