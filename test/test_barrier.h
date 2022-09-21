@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fstream>
+
 #include <doctest/doctest.h>
 
 #include "testutils.h"
