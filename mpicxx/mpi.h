@@ -273,7 +273,7 @@ class MpiWrapper<Os::Linux, true> {
     {
         int world_size;
         MPI_Comm_size(handle(), &world_size);
-        return static_cast<std::size_t>(world_size);
+        return world_size;
     }
 
     static id_type rank() noexcept
