@@ -35,22 +35,22 @@ jobs:
       - name: Test 1 cores
         run: |
           rm -rf tmp/ &> /dev/null
-          mpirun -np 1 bin/Release/mpidemo
+          mpirun -np 1 bin/Release/test
 
       - name: Test 2 cores
         run: |
           rm -rf tmp/ &> /dev/null
-          mpirun -np 2 bin/Release/mpidemo
+          mpirun -np 2 bin/Release/test
 
       - name: Test 4 cores
         run: |
           rm -rf tmp/ &> /dev/null
-          mpirun -np 4 bin/Release/mpidemo
+          mpirun -np 4 bin/Release/test
       
       - name: Test 8 cores
         run: |
           rm -rf tmp/ &> /dev/null
-          mpirun -np 8 bin/Release/mpidemo
+          mpirun -np 8 bin/Release/test
 
 
   ubuntu-single-thread:
