@@ -2,22 +2,24 @@
 
 #include <fstream>
 
-#include <doctest/doctest.h>
+#include "doctest/doctest.h"
+#include "mpicxx/mpi.h"
 
 #include "testutils.h"
-#include "mpicxx/mpi.h"
 
 TEST_CASE("Barrier")
 {
+    auto comm = mpi::communicator::get_default();
+    
     const tmpdir directory {"tmp/test/Barrier"};
     auto tmpfile = [&](auto r) { return directory.path() / std::to_string(r); };
-    Mpi::barrier();
+    comm.barrier();
     
-    std::ofstream(tmpfile(Mpi::rank())).flush();
-    wait_until([&](){ return std::filesystem::exists(tmpfile(Mpi::rank())); }, std::chrono::milliseconds{100});
+    std::ofstream(tmpfile(comm.rank())).flush();
+    wait_until([&](){ return std::filesystem::exists(tmpfile(comm.rank())); }, std::chrono::milliseconds{100});
     
-    Mpi::barrier();
-    for(auto i=0; Mpi::rank()==0 && i<Mpi::size(); ++i) {
+    comm.barrier();
+    for(auto i=0; comm.rank()==0 && i<comm.size(); ++i) {
         CHECK(std::filesystem::exists(tmpfile(i)));
     }
 }

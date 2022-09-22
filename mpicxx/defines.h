@@ -1,4 +1,7 @@
 #pragma once
+#include <type_traits>
+
+namespace mpi {
 
 enum class Os {
     Windows, Linux
@@ -29,4 +32,6 @@ constexpr Os os() noexcept {
 
 constexpr bool mpi_enabled() noexcept {
     return MPI_ENABLED;
+}
+
 }

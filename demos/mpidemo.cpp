@@ -5,6 +5,8 @@
 
 #include "mpicxx/mpi.h"
 
+auto comm = mpi::communicator::get_default();
+
 template<typename T>
 std::string vector_to_str(std::vector<T> const& container) {
     std::stringstream ss;
@@ -24,128 +26,128 @@ void print(Args...args) {
 }
 
 void demonstrate_multiprocessing() {
-    if(Mpi::rank() == 0) {
+    if(comm.rank() == 0) {
         std::cout << "\nDemonstrating multiprocessing" << std::endl;
     }
-    Mpi::barrier();
+    comm.barrier();
     // Showing barrier
-    if (Mpi::rank() == Mpi::size()-1) {
+    if (comm.rank() == comm.size()-1) {
         /* We make the last rank print, this way we'll see if the
          barrier fails (as rank 0 tends win data races) */
-        print("Using MPI processor ", Mpi::processor_name());
+        print("Using MPI processor ", comm.processor_name());
     }
-    Mpi::barrier();
+    comm.barrier();
 
     // Showing async prints
-    print("Rank ", Mpi::rank(), " says hello!");
+    print("Rank ", comm.rank(), " says hello!");
 }
 
 void demonstrate_broadcast() {
-    if(Mpi::rank() == 0) {
+    if(comm.rank() == 0) {
         std::cout << "\nDemonstrating broadcast" << std::endl;
     }
-    Mpi::barrier();
+    comm.barrier();
     {
-        int data = Mpi::rank() + 5;
+        int data = comm.rank() + 5;
         const auto orig = data;
-        Mpi::broadcast(0, data);
-        print("Rank ", Mpi::rank(), " got ", orig, " -> ", data);
+        comm.broadcast(0, data);
+        print("Rank ", comm.rank(), " got ", orig, " -> ", data);
     }
-    Mpi::barrier();
+    comm.barrier();
     {
-        std::vector<double> data {Mpi::rank() + 3.141592, Mpi::rank() + 2.71828, Mpi::rank() + 1.61803};
+        std::vector<double> data {comm.rank() + 3.141592, comm.rank() + 2.71828, comm.rank() + 1.61803};
         const auto orig = data;
-        Mpi::broadcast(Mpi::size() - 1, data);
-        print("Rank ", Mpi::rank(), " got ", vector_to_str(orig), " -> ", vector_to_str(data));
+        comm.broadcast(comm.size() - 1, data);
+        print("Rank ", comm.rank(), " got ", vector_to_str(orig), " -> ", vector_to_str(data));
     }
 }
 
 void demonstrate_sendrecv() {
-    if(Mpi::size() < 2) {
+    if(comm.size() < 2) {
         std::cout << "Skipping sendrecv demo" << std::endl;
-        Mpi::barrier();
+        comm.barrier();
         return; // Need diferent sender and reciever!
     }
-    if(Mpi::rank() == 0) {
+    if(comm.rank() == 0) {
         std::cout << "\nDemonstrating sendrecv" << std::endl;
     }
-    Mpi::barrier();
-    Mpi::id_type sender = 0;
-    Mpi::id_type reciever = Mpi::size() - 1;
+    comm.barrier();
+    mpi::id_type sender = 0;
+    mpi::id_type reciever = comm.size() - 1;
     
-    Mpi::tag_type tag = 500;
-    Mpi::tag_type mock_tag = -1;
+    mpi::tag_type tag = 500;
+    mpi::tag_type mock_tag = -1;
     {
-        Mpi::status status{};
+        mpi::status status{};
         status.MPI_TAG = mock_tag;
 
-        int data = Mpi::rank();
+        int data = comm.rank();
         
-        if (Mpi::rank() == sender) {
-            Mpi::send(reciever, tag, data);
+        if (comm.rank() == sender) {
+            comm.send(reciever, tag, data);
         }
-        if (Mpi::rank() == reciever) {
-            Mpi::recv(sender, tag, data, status);
+        if (comm.rank() == reciever) {
+            comm.recv(sender, tag, data, status);
         }
 
         if(status.MPI_TAG == mock_tag) {
-            print("Rank ", Mpi::rank(), " got no message.");
+            print("Rank ", comm.rank(), " got no message.");
         } else {
-            print("Rank ", Mpi::rank(), " got a message from ", status.MPI_SOURCE, ": tag=", status.MPI_TAG, ", value=", data);
+            print("Rank ", comm.rank(), " got a message from ", status.MPI_SOURCE, ": tag=", status.MPI_TAG, ", value=", data);
         }
     }
-    Mpi::barrier();
+    comm.barrier();
     {
-        Mpi::status status{};
+        mpi::status status{};
         status.MPI_TAG = mock_tag;
 
-        std::vector<int> data = {Mpi::rank() + 20, Mpi::rank()+40, Mpi::rank()+60, Mpi::rank()+80};
+        std::vector<int> data = {comm.rank() + 20, comm.rank()+40, comm.rank()+60, comm.rank()+80};
         
-        if (Mpi::rank() == sender) {
-            Mpi::send(reciever, tag, data);
+        if (comm.rank() == sender) {
+            comm.send(reciever, tag, data);
         }
-        if (Mpi::rank() == reciever) {
-            Mpi::recv(sender, tag, data, status);
+        if (comm.rank() == reciever) {
+            comm.recv(sender, tag, data, status);
         }
 
         if(status.MPI_TAG == mock_tag) {
-            print("Rank ", Mpi::rank(), " got no message.");
+            print("Rank ", comm.rank(), " got no message.");
         } else {
-            print("Rank ", Mpi::rank(), " got a message from ", status.MPI_SOURCE, ": tag=", status.MPI_TAG, ", value=",  vector_to_str(data));
+            print("Rank ", comm.rank(), " got a message from ", status.MPI_SOURCE, ": tag=", status.MPI_TAG, ", value=",  vector_to_str(data));
         }
     }
 }
 
 void demonstrate_gather() {
-    if(Mpi::rank() == 0) {
+    if(comm.rank() == 0) {
         std::cout << "\nDemonstrating gather" << std::endl;
     }
-    Mpi::barrier();
+    comm.barrier();
     {
-        int data = Mpi::rank();
+        int data = comm.rank();
         std::vector<int> gathered_data{};
-        Mpi::gather(Mpi::size()-1, data, gathered_data);
-        print("Rank ", Mpi::rank(), " has data ", vector_to_str(gathered_data));
+        comm.gather(comm.size()-1, data, gathered_data);
+        print("Rank ", comm.rank(), " has data ", vector_to_str(gathered_data));
     }
-    Mpi::barrier();
+    comm.barrier();
     {
-        std::vector<int> data (5u, Mpi::rank() + 10);
+        std::vector<int> data (5u, comm.rank() + 10);
         std::vector<int> gathered_data{};
-        Mpi::gather(Mpi::size()-1, data, gathered_data);
-        print("Rank ", Mpi::rank(), " sent ",  vector_to_str(data), " and recieved ", vector_to_str(gathered_data));
+        comm.gather(comm.size()-1, data, gathered_data);
+        print("Rank ", comm.rank(), " sent ",  vector_to_str(data), " and recieved ", vector_to_str(gathered_data));
     }
 }
 
 int main() {
     demonstrate_multiprocessing();
-    Mpi::barrier();
+    comm.barrier();
     
     demonstrate_broadcast();
-    Mpi::barrier();
+    comm.barrier();
 
     demonstrate_sendrecv();
-    Mpi::barrier();
+    comm.barrier();
 
     demonstrate_gather();
-    Mpi::barrier();
+    comm.barrier();
 }

@@ -20,7 +20,7 @@ MPI_Bcast(data, 5, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
 <td>
 
 ```c++
-Mpi::broadcast(data, 0);
+comm.broadcast(data, 0);
 ```
 
 </td>
@@ -52,7 +52,7 @@ MPI_Bcast(data, 5, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
 
 ```c++
 std::array<int, 5> data = whatever();
-Mpi::broadcast(data, 0);
+comm.broadcast(data, 0);
 // Automatically deducts type is int, and size is 5
 ```
 
@@ -82,7 +82,7 @@ MPI_Bcast(data.data(), 5, MPI_UNSIGNED_LONG, 0, MPI_COMM_WORLD);
 
 ```c++
 std::vector<unsigned long> data = whatever();
-Mpi::broadcast(data, 0);
+comm.broadcast(data, 0);
 ```
 
 </td>
@@ -99,15 +99,16 @@ Very, very early stage, assume everything is broken and an ever-braking API.
 **DONE**
 
 The following instructions are implemented:
-- `MPI_Init` and `MPI_Finalize` are called automatically via RAII
-- `MPI_Get_processor_name` becomes `Mpi::processor_name`
-- `MPI_Comm_size` becomes `Mpi::size`
-- `MPI_Comm_rank` becomes `Mpi::rank`
-- `MPI_Barrier` becomes `Mpi::barrier`
-- `MPI_Send` becomes `Mpi::send`
-- `MPI_Recv` becomes `Mpi::recieve`
-- `MPI_Bcast` becomes `Mpi::broadcast`
-- `MPI_Gather` becomes `Mpi::gather`
+- `MPI_Init` becomes `mpi::environment::initialize`, and is called automatically when a communicator is first used.
+- `MPI_Finalize` becomes `mpi::environment::finalize`, and is called automatically upon program termination.
+- `MPI_Get_processor_name` becomes `mpi::communicator::processor_name`
+- `MPI_Comm_size` becomes `mpi::communicator::size`
+- `MPI_Comm_rank` becomes `mpi::communicator::rank`
+- `MPI_Barrier` becomes `mpi::communicator::barrier`
+- `MPI_Send` becomes `mpi::communicator::send`
+- `MPI_Recv` becomes `mpi::communicator::recieve`
+- `MPI_Bcast` becomes `mpi::communicator::broadcast`
+- `MPI_Gather` becomes `mpi::communicator::gather`
 
 **TODO**
 
