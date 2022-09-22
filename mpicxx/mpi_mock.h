@@ -10,6 +10,18 @@
 
 namespace mpi {
 
+template<>
+inline void basic_environment<Os::Linux, false>::initialize_impl(){ }
+
+template<>
+inline void basic_environment<Os::Windows, false>::initialize_impl(){ }
+
+template<>
+inline void basic_environment<Os::Linux, false>::finalize_impl(){ }
+
+template<>
+inline void basic_environment<Os::Windows, false>::finalize_impl(){ }
+
 template<Os OS>
 class basic_communicator<OS, false>;
 
@@ -118,10 +130,13 @@ class basic_communicator<OS, false> {
   public:
 
     using status = basic_status<OS, false>;
+    using environment = basic_environment<OS, false>;
+
 
     explicit basic_communicator(handle_type c)
         : communicator_handle(c)
     {
+        basic_environment<OS, false>::initialize();
     }
     
     basic_communicator(basic_communicator& other) 
@@ -137,16 +152,18 @@ class basic_communicator<OS, false> {
 
     [[nodiscard]]
     constexpr mpi::size_type size() const noexcept {
+        environment::assert_running(); 
         return 1;
     }
 
     [[nodiscard]]
     constexpr mpi::size_type rank() const noexcept {
+        environment::assert_running(); 
         return 0;
     }
     
     [[nodiscard]]
-    std::string processor_name() const noexcept {
+    static std::string processor_name() noexcept {
         return "MockMpiProcessor";
     }
 
@@ -154,6 +171,7 @@ class basic_communicator<OS, false> {
 
     template<mpi::ValidType T>
     void send([[maybe_unused]] id_type destination, tag_type tag, T& data) {
+        environment::assert_running();
         assert(destination == rank());
         
         auto it = sendrcv_buffer.find(tag);
@@ -168,6 +186,7 @@ class basic_communicator<OS, false> {
 
     template<mpi::ValidContainer T>
     void send([[maybe_unused]] id_type destination, tag_type tag, T& data) const {
+        environment::assert_running();
         assert(destination == rank());
         
         auto it = sendrcv_buffer.find(tag);
@@ -185,7 +204,9 @@ class basic_communicator<OS, false> {
 
     template<mpi::ValidType T>
     void recv([[maybe_unused]] id_type source, tag_type tag, T& data, status& status) const  {
+        environment::assert_running();
         assert(source == rank());
+
         auto it = sendrcv_buffer.find(tag);
         assert(it != sendrcv_buffer.end());
         auto const& [msg, stat] = it->second.get<T>();
@@ -196,7 +217,9 @@ class basic_communicator<OS, false> {
 
     template<mpi::ValidContainer T>
     void recv([[maybe_unused]] id_type source, tag_type tag, T& data, status& status) const {
+        environment::assert_running();
         assert(source == rank());
+
         auto it = sendrcv_buffer.find(tag);
         assert(it != sendrcv_buffer.end());
         
@@ -211,24 +234,30 @@ class basic_communicator<OS, false> {
 
     template<mpi::ValidType T>
     constexpr void broadcast([[maybe_unused]] id_type source, T&) const {
+        environment::assert_running();
         assert(source == rank());
     }
 
     template<mpi::ValidContainer T>
     void broadcast([[maybe_unused]] id_type source, T&) const {
+        environment::assert_running();
         assert(source == rank());
     }
     
     template<mpi::ValidContainer C>
     void gather([[maybe_unused]] id_type destination, typename container_traits<C>::data data, C& output) const {        
+        environment::assert_running();
         assert (rank() == destination);
+
         container_traits<C>::try_resize(output, size());
         container_traits<C>::front(output) = data;
     }
     
     template<mpi::ValidContainer C>
     void gather([[maybe_unused]] id_type destination, C const& data, C& output) const {
+        environment::assert_running();
         assert (rank() == destination);
+
         const std::size_t msg_size = data.size();
         container_traits<C>::try_resize(output, msg_size);
         memcpy(container_traits<C>::pointer(output), container_traits<C>::pointer(data), msg_size * sizeof(typename container_traits<C>::data));
