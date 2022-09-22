@@ -12,6 +12,12 @@ using size_type = int;
 using tag_type = int;
 using handle_type = int;
 
+template<Os OS, bool MpiEnabled>
+class basic_communicator;
+
+template<Os OS, bool MpiEnabled>
+struct basic_status;
+
 // RAII class to initialize and finalize MPI
 template<Os OS, bool MpiEnabled>
 struct basic_environment {
@@ -84,12 +90,6 @@ private:
     static void finalize_impl();
 };
 
-
-template<Os OS, bool MpiEnabled>
-class basic_communicator;
-
-template<Os OS, bool MpiEnabled>
-struct basic_status;
 
 template<typename T>
 concept ValidType = AnyOf<T,

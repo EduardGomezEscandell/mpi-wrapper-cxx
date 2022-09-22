@@ -42,7 +42,7 @@ class basic_communicator<Os::Linux, true> {
         environment::initialize();
     }
     
-    basic_communicator(basic_communicator& other) 
+    basic_communicator(basic_communicator const& other) 
         : communicator_handle(other.communicator_handle)
     {
     }
