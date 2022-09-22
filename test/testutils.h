@@ -13,7 +13,7 @@ class tmpdir {
 public:
 
     tmpdir(std::string const& path) : valid_{true}, path_{path} {
-        if(Mpi::rank() != 0) {
+        if(mpi::communicator::get_default().rank() != 0) {
             return;
         }
         if (std::filesystem::exists(path_)) {
@@ -26,7 +26,7 @@ public:
     auto const& path() const noexcept { return path_; }
 
     ~tmpdir() {
-        if(Mpi::rank() != 0) {
+        if(mpi::communicator::get_default().rank() != 0) {
             return;
         }
         if (valid_) {

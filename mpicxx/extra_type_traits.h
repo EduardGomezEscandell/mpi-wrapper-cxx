@@ -6,6 +6,8 @@
 #include <type_traits>
 #include <vector>
 
+namespace mpi {
+
 // Returns true if T is the same type as any of Args
 template<typename T, typename...Args>
 constexpr bool same_as_any() {
@@ -82,3 +84,4 @@ struct container_traits<std::vector<bool>> {
 template<typename C>
 concept ContiguousContainer = container_traits<C>::contiguous;
 
+}
