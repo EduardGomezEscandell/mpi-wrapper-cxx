@@ -44,22 +44,22 @@ namespace mock {
     };
 
     template<mpi::ValidType T> constexpr data_types mpi_data_type() noexcept;
-    template<> constexpr data_types mpi_data_type<char>()               noexcept { return data_types::char_; }
-    template<> constexpr data_types mpi_data_type<signed char>()        noexcept { return data_types::signed_char_; }
-    template<> constexpr data_types mpi_data_type<unsigned char>()      noexcept { return data_types::unsigned_char_; }
-    template<> constexpr data_types mpi_data_type<wchar_t>()            noexcept { return data_types::wchar_t_; }
-    template<> constexpr data_types mpi_data_type<short>()              noexcept { return data_types::short_; }
-    template<> constexpr data_types mpi_data_type<unsigned short>()     noexcept { return data_types::unsigned_short_; }
-    template<> constexpr data_types mpi_data_type<int>()                noexcept { return data_types::int_; }
-    template<> constexpr data_types mpi_data_type<unsigned int>()       noexcept { return data_types::unsigned_int_; }
-    template<> constexpr data_types mpi_data_type<long>()               noexcept { return data_types::long_; }
-    template<> constexpr data_types mpi_data_type<unsigned long>()      noexcept { return data_types::unsigned_long_; }
-    template<> constexpr data_types mpi_data_type<long long>()          noexcept { return data_types::long_long_; }
-    template<> constexpr data_types mpi_data_type<unsigned long long>() noexcept { return data_types::unsigned_long_long_; }
-    template<> constexpr data_types mpi_data_type<float>()              noexcept { return data_types::float_; }
-    template<> constexpr data_types mpi_data_type<double>()             noexcept { return data_types::double_; }
-    template<> constexpr data_types mpi_data_type<long double>()        noexcept { return data_types::long_double_; }
-    template<> constexpr data_types mpi_data_type<bool>()               noexcept { return data_types::bool_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<char>()               noexcept { return data_types::char_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<signed char>()        noexcept { return data_types::signed_char_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<unsigned char>()      noexcept { return data_types::unsigned_char_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<wchar_t>()            noexcept { return data_types::wchar_t_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<short>()              noexcept { return data_types::short_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<unsigned short>()     noexcept { return data_types::unsigned_short_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<int>()                noexcept { return data_types::int_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<unsigned int>()       noexcept { return data_types::unsigned_int_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<long>()               noexcept { return data_types::long_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<unsigned long>()      noexcept { return data_types::unsigned_long_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<long long>()          noexcept { return data_types::long_long_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<unsigned long long>() noexcept { return data_types::unsigned_long_long_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<float>()              noexcept { return data_types::float_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<double>()             noexcept { return data_types::double_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<long double>()        noexcept { return data_types::long_double_; }
+    template<> [[nodiscard]] constexpr data_types mpi_data_type<bool>()               noexcept { return data_types::bool_; }
 
 
     // Type-erased buffer entry
@@ -100,7 +100,7 @@ namespace mock {
             return *this;
         }
 
-        template<typename T>
+        template<typename T> [[nodiscard]]
         std::pair<T*, status const&> get() const {
             assert(mpi_data_type<T>() == type);
             return {static_cast<T*>(data), status_};
@@ -129,19 +129,23 @@ class basic_communicator<OS, false> {
     {
     }
 
+    [[nodiscard]]
     static basic_communicator get_default()
     {
         return basic_communicator{0};
     }
 
+    [[nodiscard]]
     constexpr mpi::size_type size() const noexcept {
         return 1;
     }
 
+    [[nodiscard]]
     constexpr mpi::size_type rank() const noexcept {
         return 0;
     }
     
+    [[nodiscard]]
     std::string processor_name() const noexcept {
         return "MockMpiProcessor";
     }

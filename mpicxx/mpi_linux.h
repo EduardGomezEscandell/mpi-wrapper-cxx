@@ -46,11 +46,13 @@ class basic_communicator<Os::Linux, true> {
     {
     }
 
+    [[nodiscard]]
     static basic_communicator get_default()
     {
         return basic_communicator{MPI_COMM_WORLD};
     }
 
+    [[nodiscard]]
     static std::string processor_name() noexcept 
     {
         char name[MPI_MAX_PROCESSOR_NAME];
@@ -59,6 +61,7 @@ class basic_communicator<Os::Linux, true> {
         return name;
     }
 
+    [[nodiscard]]
     size_type size() const noexcept
     {
         int world_size;
@@ -66,6 +69,7 @@ class basic_communicator<Os::Linux, true> {
         return world_size;
     }
 
+    [[nodiscard]]
     id_type rank() const noexcept
     {
         int world_rank;
@@ -163,22 +167,22 @@ class basic_communicator<Os::Linux, true> {
     handle_type communicator_handle;
 };
 
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<char>   ()            noexcept { return MPI_CHAR; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<signed char>()        noexcept { return MPI_SIGNED_CHAR; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<unsigned char>()      noexcept { return MPI_UNSIGNED_CHAR; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<wchar_t>()            noexcept { return MPI_WCHAR; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<short>()              noexcept { return MPI_SHORT; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<unsigned short>()     noexcept { return MPI_UNSIGNED_SHORT; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<int>()                noexcept { return MPI_INT; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<unsigned int>()       noexcept { return MPI_UNSIGNED; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<long>()               noexcept { return MPI_LONG; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<unsigned long>()      noexcept { return MPI_UNSIGNED_LONG; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<long long>()          noexcept { return MPI_LONG_LONG_INT; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<unsigned long long>() noexcept { return MPI_UNSIGNED_LONG_LONG; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<float>()              noexcept { return MPI_FLOAT; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<double>()             noexcept { return MPI_DOUBLE; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<long double>()        noexcept { return MPI_LONG_DOUBLE; }
-template<> constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<bool>()               noexcept { return MPI_C_BOOL; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<char>   ()            noexcept { return MPI_CHAR; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<signed char>()        noexcept { return MPI_SIGNED_CHAR; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<unsigned char>()      noexcept { return MPI_UNSIGNED_CHAR; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<wchar_t>()            noexcept { return MPI_WCHAR; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<short>()              noexcept { return MPI_SHORT; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<unsigned short>()     noexcept { return MPI_UNSIGNED_SHORT; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<int>()                noexcept { return MPI_INT; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<unsigned int>()       noexcept { return MPI_UNSIGNED; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<long>()               noexcept { return MPI_LONG; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<unsigned long>()      noexcept { return MPI_UNSIGNED_LONG; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<long long>()          noexcept { return MPI_LONG_LONG_INT; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<unsigned long long>() noexcept { return MPI_UNSIGNED_LONG_LONG; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<float>()              noexcept { return MPI_FLOAT; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<double>()             noexcept { return MPI_DOUBLE; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<long double>()        noexcept { return MPI_LONG_DOUBLE; }
+template<> [[nodiscard]] constexpr MPI_Datatype basic_communicator<Os::Linux, true>::mpi_data_type<bool>()               noexcept { return MPI_C_BOOL; }
 
 }
 
