@@ -31,10 +31,16 @@ struct basic_status<Os::Linux, true> : MPI_Status {
 };
 
 template<>
+struct handle_selector<Os::Linux, true> {
+    using handle = MPI_Comm;
+};
+
+template<>
 class basic_communicator<Os::Linux, true> {
   public:
     using status = basic_status<Os::Linux, true>;
     using environment = basic_environment<Os::Linux, true>;
+    using handle_type = typename handle_selector<Os::Linux, true>::handle;
 
     explicit basic_communicator(MPI_Comm c)
         : communicator_handle(c)

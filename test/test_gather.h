@@ -1,7 +1,7 @@
 #pragma once
 
 #include "doctest/doctest.h"
-#include "mpicxx/mpi.h"
+#include "mpicxx/mpicxx.h"
 
 TEST_CASE_TEMPLATE("VectorSingleGatherFirst", T, int, unsigned, char, long long, float, double)
 {

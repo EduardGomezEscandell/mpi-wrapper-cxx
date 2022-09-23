@@ -5,7 +5,7 @@
 #include <chrono>
 #include <thread>
 
-#include "mpicxx/mpi.h"
+#include "mpicxx/mpicxx.h"
 
 class tmpdir {
     bool valid_;

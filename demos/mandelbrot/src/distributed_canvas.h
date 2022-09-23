@@ -3,7 +3,7 @@
 #include <ranges>
 #include <span>
 
-#include "mpicxx/mpi.h"
+#include "mpicxx/mpicxx.h"
 
 #include "colours.h"
 

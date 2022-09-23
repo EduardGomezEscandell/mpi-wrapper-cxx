@@ -6,7 +6,7 @@ export BUILD_TYPE=${BUILD_TYPE:-Release}
 
 # Chosing compiler
 if [ ${MPI_ENABLED} = "true" ]; then
-    export CC=mpicxx
+    export CC=mpicc
     export CXX=mpicxx
 else
     export CC=${CC:-gcc}
@@ -18,6 +18,8 @@ cmake                                   \
     -DCMAKE_BUILD_TYPE=${BUILD_TYPE}    \
     -DPROJECT_ROOT=`pwd`                \
     -B"build/${BUILD_TYPE}"             \
-    -DMPI_ENABLED=$MPI_ENABLED
+    -DMPI_ENABLED=$MPI_ENABLED          \
+    -DCC=${CC}                          \
+    -DCXX=${CXX}
 
 cmake --build "build/${BUILD_TYPE}" -- -j$(nproc)

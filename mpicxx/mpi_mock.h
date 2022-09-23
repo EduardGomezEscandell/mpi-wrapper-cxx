@@ -23,6 +23,11 @@ template<>
 inline void basic_environment<Os::Windows, false>::finalize_impl(){ }
 
 template<Os OS>
+struct handle_selector<OS, false> {
+    using handle = void*;
+};
+
+template<Os OS>
 class basic_communicator<OS, false>;
 
 template<Os OS>
@@ -131,7 +136,7 @@ class basic_communicator<OS, false> {
 
     using status = basic_status<OS, false>;
     using environment = basic_environment<OS, false>;
-
+    using handle_type = typename handle_selector<OS, false>::handle;
 
     explicit basic_communicator(handle_type c)
         : communicator_handle(c)

@@ -3,7 +3,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include "mpicxx/mpi.h"
+#include "mpicxx/mpicxx.h"
 
 auto comm = mpi::communicator::get_default();
 

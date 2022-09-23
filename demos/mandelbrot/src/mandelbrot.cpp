@@ -1,7 +1,7 @@
 #include <filesystem>
 #include <fstream>
 
-#include "mpicxx/mpi.h"
+#include "mpicxx/mpicxx.h"
 
 #include "distributed_canvas.h"
 #include "settings.h"

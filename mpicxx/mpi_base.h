@@ -10,7 +10,9 @@ namespace mpi {
 using id_type = int;
 using size_type = int;
 using tag_type = int;
-using handle_type = int;
+
+template<Os OS, bool MpiEnabled>
+struct handle_selector;
 
 template<Os OS, bool MpiEnabled>
 class basic_communicator;
