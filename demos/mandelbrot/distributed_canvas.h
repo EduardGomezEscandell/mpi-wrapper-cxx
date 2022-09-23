@@ -4,7 +4,6 @@
 #include <fstream>
 #include <ranges>
 #include <span>
-#include <unistd.h>
 
 #include "mpicxx/mpi.h"
 

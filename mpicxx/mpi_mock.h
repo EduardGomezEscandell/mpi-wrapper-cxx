@@ -139,7 +139,7 @@ class basic_communicator<OS, false> {
         basic_environment<OS, false>::initialize();
     }
     
-    basic_communicator(basic_communicator& other) 
+    basic_communicator(basic_communicator const& other) 
         : communicator_handle(other.communicator_handle)
     {
     }
