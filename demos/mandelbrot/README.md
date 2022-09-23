@@ -24,6 +24,8 @@ sudo apt-get -y update && sudo apt-get -y install netpbm
 pnmtopng output.ppm > image.png
 ```
 
+Otherwise you can simply open the `ppm` image file with some image viewers or with Inkscape.
+
 ### Results
 
 The default results producte the following image:
