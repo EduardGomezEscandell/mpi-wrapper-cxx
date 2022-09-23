@@ -1,5 +1,7 @@
 # MPI for C++
-This codebase ofers a wrapper around MPI C libraries with modern C++ constructs to allow for better code:
+This codebase ofers a wrapper around MPI C libraries with modern C++ constructs to allow for better code. See some demos:
+- [Hello world](demos/helloworld/)
+- [Mandelbrot set drawer](demos/mandelbrot/)
 
 ### Less verbose
 Thanks to template argument deduction and constexpr functions.
