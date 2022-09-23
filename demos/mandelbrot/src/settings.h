@@ -29,7 +29,7 @@ void logline(settings const& config, bool is_debug, Args...args) {
     if(is_debug && !config.debug) {
         return;
     }
-    
+
     std::stringstream buffer;
     ( buffer << ... << args );
     std::cout << buffer.str() << std::endl;
@@ -46,6 +46,7 @@ inline std::ostream& operator<<(std::ostream& os, encoding e) {
 
 inline std::ostream& operator<<(std::ostream& os, settings const& s) {
     return os
+        << "# Settings:\n"
         << "center_real: " << s.center.real() << "\n"
         << "center_imag: " << s.center.imag() << "\n"
         << "span:        " << s.span.real() << "\n"

@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <string_view>
 #include <optional>
+#include <thread>
 
 #include "settings.h"
 #include "distributed_canvas.h"

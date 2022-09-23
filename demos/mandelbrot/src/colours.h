@@ -13,7 +13,7 @@ constexpr channel color_depth() noexcept {
     return 255;
 }
 
-inline int to_int(channel ch) {
+constexpr int to_int(channel ch) {
     return static_cast<int>(ch);
 }
 
