@@ -114,7 +114,6 @@ The following instructions are implemented:
 
 - Implement a wrapper for Windows MPI
 - Support for `std::span`
-- Support for multiple communicators
 - More instructions.
 - More tests
 - Actual demos
