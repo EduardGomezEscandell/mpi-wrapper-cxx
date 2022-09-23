@@ -1,10 +1,15 @@
 #pragma once
 
+#include <chrono>
+#include <fstream>
 #include <ranges>
+#include <span>
+#include <unistd.h>
 
 #include "mpicxx/mpi.h"
 
 #include "colours.h"
+#include "test/testutils.h"
 
 class distributed_canvas
 {
@@ -84,6 +89,14 @@ public:
     mpi::communicator communicator() const {
         return comm_;
     }
+
+    std::span<pixel> flat_view() {
+        return {data_.begin(), data_.end()};
+    }
+
+    std::span<const pixel> flat_view() const {
+        return {data_.cbegin(), data_.cend()};
+    }
    
 private:
     std::size_t width_;
@@ -91,3 +104,45 @@ private:
     mpi::communicator comm_;
     std::vector<pixel> data_;
 };
+
+void write_ppm(distributed_canvas const& canvas, settings const& config) 
+{
+    auto comm = canvas.communicator();
+
+    // Setup
+    if (comm.rank() == 0) {
+        if(std::filesystem::exists(config.output)) {
+            std::filesystem::remove(config.output);
+        }
+    }
+
+    // Header
+    if (comm.rank() == 0) {
+        std::ofstream output(config.output, std::ios::app);
+        output << "P3\n";
+        output << canvas.global_width() << " " << canvas.global_height() << " " << to_int(color_depth()) << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds{100}); // TODO: This is hella ugly, won't scale with larger images
+    }
+    comm.barrier();
+
+    // Stringifying
+    const std::string data = [comm, &canvas]() {
+        std::stringstream data;
+        for(auto const& px: canvas.flat_view()) {
+            data << to_int(px[0]) << ' ' << to_int(px[1]) << ' ' << to_int(px[2]) << ' ';
+        }
+        return data.str();
+    }();
+
+    // Writing// Stringifying
+    for (auto rank: std::ranges::iota_view<int, int>{0, comm.size()})
+    {    
+        if(comm.rank() == rank) {
+            std::ofstream output(config.output, std::ios::app);
+            output << data << std::endl;
+            logline(config, true, "Rank ", comm.rank(), " is done writing");
+            std::this_thread::sleep_for(std::chrono::milliseconds{100}); // TODO: This is hella ugly, won't scale with larger images
+        }
+        comm.barrier();
+    }
+}

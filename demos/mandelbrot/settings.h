@@ -1,6 +1,7 @@
 #pragma once
 
 #include <complex>
+#include <filesystem>
 #include <iostream>
 
 struct settings {
@@ -10,10 +11,11 @@ struct settings {
     std::size_t img_height;
     std::size_t max_iter;
     bool debug = false;
+    std::filesystem::path output;
 
     // Changes span imaginary component to match the image aspect ratio
     void adjust_span() {
-        const double aspect_ratio = span.imag() / span.real();
+        const double aspect_ratio = static_cast<double>(img_height) / static_cast<double>(img_width);
         span.imag(span.real() * aspect_ratio);
     }
 };

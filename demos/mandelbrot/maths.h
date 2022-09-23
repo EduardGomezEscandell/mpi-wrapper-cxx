@@ -36,7 +36,9 @@ void update_image(settings& config, distributed_canvas& canvas) {
     auto rows = canvas.rows();
     auto cols = canvas.cols();
 
-    std::complex<double> top_left = config.center - config.span / 2.0;
+    std::complex<double> top_left;
+    top_left.real(config.center.real() - config.span.real() / 2.0);
+    top_left.imag(config.center.imag() + config.span.imag() / 2.0);
     
     std::for_each(std::execution::par_unseq, rows.begin(), rows.end(), 
       [&cols, &top_left, &config, &canvas](std::size_t row) {

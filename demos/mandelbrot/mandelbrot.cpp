@@ -1,9 +1,12 @@
+#include <filesystem>
+#include <fstream>
+
 #include "mpicxx/mpi.h"
 
 #include "distributed_canvas.h"
 #include "settings.h"
 #include "maths.h"
-#include <unistd.h>
+
 
 auto comm = mpi::communicator::get_default();
 
@@ -12,8 +15,9 @@ int main() {
     auto config = settings{
         std::complex<double>{-0.6, 0},
         std::complex<double>{4.0, 2.25},
-        5, 20,
-        20, true
+        1920, 1080,
+        50, true,
+        std::filesystem::path{"output.ppm"}
     };
     config.adjust_span();
 
@@ -22,4 +26,6 @@ int main() {
     logline(config, true, "Rank ", comm.rank(), " is in charge of rows ", canvas.rows().front(), " until ", canvas.rows().back());
     
     update_image(config, canvas);
+
+    write_ppm(canvas, config);
 }
