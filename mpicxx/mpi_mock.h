@@ -1,11 +1,11 @@
 #pragma once
 
 #include <map>
+#include <cstring>
+#include <utility>
 
 #include "defines.h"
 #include "extra_type_traits.h"
-
-#include <cstring>
 #include "mpi_base.h"
 
 namespace mpi {
@@ -90,10 +90,10 @@ namespace mock {
             mpi::size_type count,
             mpi::tag_type tag,
             T& first) 
-            : data{malloc(count * sizeof(first))}
+            : data{malloc(static_cast<std::size_t>(count) * sizeof(first))}
             , type{mpi_data_type<T>()}
         {
-            memcpy(data, &first, count * sizeof(T));
+            memcpy(data, &first, static_cast<std::size_t>(count) * sizeof(T));
             status_ = status{count, 0, source, tag, 0};
         }
 
@@ -227,8 +227,8 @@ class basic_communicator<OS, false> {
         status = stat;
         assert(static_cast<std::size_t>(status.count) <= container_traits<T>::size(data));
 
-        container_traits<T>::try_resize(data, status.count);
-        memcpy(&container_traits<T>::front(data), msg, status.count * sizeof(T));
+        container_traits<T>::try_resize(data, static_cast<std::size_t>(status.count));
+        memcpy(&container_traits<T>::front(data), msg, static_cast<std::size_t>(status.count) * sizeof(T));
         sendrcv_buffer.erase(it);
     }
 
@@ -249,7 +249,7 @@ class basic_communicator<OS, false> {
         environment::assert_running();
         assert (rank() == destination);
 
-        container_traits<C>::try_resize(output, size());
+        container_traits<C>::try_resize(output, static_cast<std::size_t>(size()));
         container_traits<C>::front(output) = data;
     }
     

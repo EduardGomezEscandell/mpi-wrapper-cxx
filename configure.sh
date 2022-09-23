@@ -9,8 +9,8 @@ if [ ${MPI_ENABLED} = "true" ]; then
     export CC=mpicxx
     export CXX=mpicxx
 else
-    export CC=gcc
-    export CXX=g++
+    export CC=${CC:-gcc}
+    export CXX=${CXX:-g++}
 fi
 
 cmake                                   \
