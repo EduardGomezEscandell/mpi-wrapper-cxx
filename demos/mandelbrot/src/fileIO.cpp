@@ -190,6 +190,15 @@ T parse_value(std::string_view s) {
 }
 
 template<>
+std::size_t parse_value(std::string_view s) {
+    unsigned long x = 0;
+    if(std::from_chars(&(*s.begin()), &(*s.end()), x).ec == std::errc::invalid_argument) {
+        throw std::invalid_argument("Failed to parse integral value: '" + std::string{s} + "'");
+    }
+    return static_cast<std::size_t>(x);
+}
+
+template<>
 double parse_value(std::string_view s) {
     auto str = std::string{s.begin(), s.end()};
     return std::stod(str, 0);
