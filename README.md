@@ -142,6 +142,14 @@ Then you can compile, optionally enabling or disabling MPI:
 MPI_ENABLED=true bash configure.sh
 ```
 
+### Linker errors?
+Note: if you compile it without MPI, and later want to compile it in MPI, you'll get a long list of linker errors. Fix it by doing the following:
+```bash
+rm -r bin/Release/ build/Release/
+MPI_ENABLED=true bash configure.sh
+```
+Change from Release to Debug if relevant.
+
 ## Run
 Once compiled, you can run it with:
 ```Powershell
@@ -162,4 +170,4 @@ Once compiled, you can run it with:
 ./bin/test              # On Linux
 mpirun -np 4 bin/test   # On Linux with mpi
 ```
-Change the `4` with the number of ranks you desire. Note that if you mpirun an executable compiled without MPI, it's simply going run the same process in each rank independently.
+Change the `4` with the number of ranks you desire.
