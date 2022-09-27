@@ -41,8 +41,9 @@ struct colormap {
 struct grayscale : public colormap
 {
     grayscale(settings const& config)
+        : ratio{static_cast<double>(color_depth()) / static_cast<double>(config.max_iter - config.min_iter)}
+        , min_iter{config.min_iter}
     {
-        ratio = static_cast<double>(color_depth()) / static_cast<double>(config.max_iter);
     }
 
     static std::unique_ptr<colormap> create(settings const& config) {
@@ -54,7 +55,7 @@ struct grayscale : public colormap
     }
 
     pixel colorize(unsigned score) const override {
-        channel intensity = color_depth() - static_cast<channel>(ratio * static_cast<double>(score));
+        channel intensity = color_depth() - static_cast<channel>(ratio * static_cast<double>(score >= min_iter ? score-min_iter : 0));
         return {intensity, intensity, intensity};
     }
 
@@ -62,50 +63,11 @@ struct grayscale : public colormap
 
 protected:
     double ratio;
+    unsigned min_iter;
 };
-
-// template<std::size_t N>
-// struct lookup_table {
-//     lookup_table(std::array<pixel, N> const& t) :
-//         table(t)
-//     {
-//         std::sort(table.begin(), table.end());
-//     }
-
-//     std::array<pixel, N> table;
-
-//     pixel lookup(unsigned x) {
-//         std::partition_point(table.begin(), table.end(), [x](pixel& reference) { return x < reference; });
-//     }
-
-// };
-
 
 struct pastel : public colormap
 {
-    /*
-var ct_pastel Colortable = Colortable{
-	lower_bounds: []float64{0, 0.2, 0.4, 0.6, 0.8, 1},
-	colors: []Color{
-		ColorFromHex(0xA3CEB1),
-		ColorFromHex(0xEBEBD3),
-		ColorFromHex(0xE8D3B6),
-		ColorFromHex(0xA3AEC0),
-		ColorFromHex(0xE0BCC6)},
-	max_color: ColorFromHex(0),
-	len:       5,
-}
-
-func pastelEval(cmap *Colormap, value int) Color {
-	if value == cmap.Upper {
-		return ct_pastel.max_color
-	}
-	d := value % ct_pastel.len
-	x := float64(d) / float64(ct_pastel.len)
-
-	return ct_pastel.Get(x)
-}
-    */
     pastel(settings const& config) : maxiter(config.max_iter)
     {
     }

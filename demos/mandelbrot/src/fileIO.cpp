@@ -219,9 +219,10 @@ const std::map<std::string_view, void(*)(settings&, std::string_view)> ini_reade
     {"span",        [](settings& s, std::string_view v) { s.span.real(parse_value<double>(v)); }},
     {"img_width",   [](settings& s, std::string_view v) { s.img_width  = parse_value<std::size_t>(v); }},
     {"img_height",  [](settings& s, std::string_view v) { s.img_height = parse_value<std::size_t>(v); }},
-    {"max_iter",    [](settings& s, std::string_view v) { s.max_iter   = parse_value<unsigned>(v); }},
     {"debug",       [](settings& s, std::string_view v) { s.debug      = parse_value<bool>(v); }},
     {"output",      [](settings& s, std::string_view v) { s.output     = parse_value<std::string>(v); }},
     {"encoding",    [](settings& s, std::string_view v) { s.encode     = parse_value<encoding>(v); }},
-    {"colormap",    [](settings& s, std::string_view v) { s.colormap   = parse_value<std::string>(v); }}
+    {"colormap",    [](settings& s, std::string_view v) { s.colormap   = parse_value<std::string>(v); }},
+    {"max_iter",    [](settings& s, std::string_view v) { s.max_iter   = parse_value<unsigned>(v); }},
+    {"min_iter",    [](settings& s, std::string_view v) { s.min_iter   = parse_value<unsigned>(v); }},
 };

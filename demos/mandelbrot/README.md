@@ -57,9 +57,6 @@ span:        4.0        # positive integer
 img_width:   1920       # positive integer
 img_height:  1080       # positive integer
 
-; Maximum number of iterations per pixel
-max_iter:    30         # positive integer
-
 ; Whether to print debug info or not
 debug:       false      # [true|false]
 
@@ -71,4 +68,10 @@ encoding:    binary     # [asccii|binary]
 
 ; What colormap to use
 colormap:    grayscale # [grayscale|pastel]
+
+; Maximum number of iterations per pixel
+max_iter:    30         # positive integer, greater than min_iter
+
+; Smallest number of iterations represented by colormap
+min_iter:    30         # positive integer, less than max_iter
 ```
