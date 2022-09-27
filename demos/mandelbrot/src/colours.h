@@ -4,11 +4,29 @@
 #include <cstdint>
 #include <array>
 #include <stdexcept>
+#include <cassert>
 
 #include "settings.h"
 
 using channel = std::uint8_t;
 using pixel = std::array<channel, 3>;
+
+constexpr pixel pixel_from_hex(unsigned hex) {
+    return pixel{
+        static_cast<channel>(hex >> 16 & 0xff),
+        static_cast<channel>(hex >> 8 & 0xff),
+        static_cast<channel>(hex & 0xff)
+    };
+}
+
+namespace colors {
+    constexpr pixel WHITE = pixel_from_hex(0xffffff);
+    constexpr pixel BLACK = pixel_from_hex(0);
+    constexpr pixel RED   = pixel_from_hex(0xff0000);
+    constexpr pixel GREEN = pixel_from_hex(0x00ff00);
+    constexpr pixel BLUE  = pixel_from_hex(0x0000ff);
+}
+
 
 
 struct colormap {
@@ -44,6 +62,23 @@ protected:
     double ratio;
 };
 
+// template<std::size_t N>
+// struct lookup_table {
+//     lookup_table(std::array<pixel, N> const& t) :
+//         table(t)
+//     {
+//         std::sort(table.begin(), table.end());
+//     }
+
+//     std::array<pixel, N> table;
+
+//     pixel lookup(unsigned x) {
+//         std::partition_point(table.begin(), table.end(), [x](pixel& reference) { return x < reference; });
+//     }
+
+// };
+
+
 struct pastel : public colormap
 {
     /*
@@ -69,9 +104,8 @@ func pastelEval(cmap *Colormap, value int) Color {
 	return ct_pastel.Get(x)
 }
     */
-    pastel(settings const& config)
+    pastel(settings const& config) : maxiter(config.max_iter)
     {
-        ratio = static_cast<double>(color_depth()) / static_cast<double>(config.max_iter);
     }
 
     static std::unique_ptr<colormap> create(settings const& config) {
@@ -83,14 +117,21 @@ func pastelEval(cmap *Colormap, value int) Color {
     }
 
     pixel colorize(unsigned score) const override {
-        channel intensity = color_depth() - static_cast<channel>(ratio * static_cast<double>(score));
-        return {intensity, intensity, intensity};
+        if(score == maxiter) return colors::BLACK;
+        return colortable[score % colortable.size()];
     }
 
     static constexpr std::string_view name = "pastel";
 
 protected:
-    double ratio;
+    unsigned maxiter;
+    constexpr static std::array colortable {
+            pixel_from_hex(0xA3CEB1),
+            pixel_from_hex(0xEBEBD3),
+            pixel_from_hex(0xE8D3B6),
+            pixel_from_hex(0xA3AEC0),
+            pixel_from_hex(0xE0BCC6),
+    };
 };
 
 inline std::unique_ptr<colormap> colormap_factory(settings config) {

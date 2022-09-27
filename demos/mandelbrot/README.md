@@ -10,9 +10,9 @@ Run the executable with a single argument
 ./bin/Release/mandelbrot [settings-file]
 
 # Run with MPI
-mpirun -np 4 ./bin/Release/mandelbrot demos/mandelbrot/data/mandelbrot.ini [settings-file]
+mpirun -np 4 ./bin/Release/mandelbrot demos/mandelbrot/data/grayscale.ini
 ```
-Do not specify a file if you want to run the defaults. You can see an example settings file in `data/mandelbrot.ini`.
+Do not specify a file if you want to run the defaults. You can see an example settings file in `data/grayscale.ini`.
 This will create a file with format NetPBM. Conversion to a reasonable image type is outside the scope of this project,
 but you can use:
 
@@ -64,4 +64,7 @@ output:      output.ppm # string
 
 ; What format to store the image (NetPMB ascii or binary)
 encoding:    binary     # [asccii|binary]
+
+; What file to write the image to
+colormap:    grayscale # [grayscale|pastel]
 ```
