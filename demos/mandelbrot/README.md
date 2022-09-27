@@ -34,7 +34,7 @@ The default results produces the following image:
 
 The sample settings file `data/grayscale.ini` produces the following image:
 
-![image](data/sample.png)
+![image](data/grayscale.png)
 
 The sample settings file `data/pastel.ini` produces the following image:
 
