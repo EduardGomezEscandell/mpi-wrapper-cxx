@@ -30,7 +30,7 @@ inline unsigned mandelbrot_escape_time(std::complex<double> const& c, unsigned m
     return max_iter;
 }
 
-void update_image(settings& config, distributed_canvas& canvas) {
+void update_image(settings const& config, distributed_canvas& canvas) {
     // This wouldn't be necessary if std::ranges::iota_view::iterator was a forward iterator :(
     auto rows = std::vector<std::size_t>(canvas.rows().begin(), canvas.rows().end());
     auto cols = std::vector<std::size_t>(canvas.cols().begin(), canvas.cols().end());

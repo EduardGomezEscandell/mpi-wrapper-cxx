@@ -12,4 +12,4 @@
 std::size_t mandelbrot_escape_time(std::complex<double> const& c, std::size_t max_iter);
 
 // Paints a canvas with current config
-void update_image(settings& config, distributed_canvas& canvas);
+void update_image(settings const& config, distributed_canvas& canvas);

@@ -12,10 +12,12 @@
 auto comm = mpi::communicator::get_default();
 
 int main(int argc, char** argv) {
-    settings config;
-    if(argc == 2) {
-        config = ini_reader(std::filesystem::path{argv[1]}).read();
-    }
+    const settings config = [&]() {
+        if(argc == 2) {
+            return ini_reader(std::filesystem::path{argv[1]}).read();
+        }
+        return settings{};
+    }();
 
     if(comm.rank() == 0) {
         logline(config, true, config);
