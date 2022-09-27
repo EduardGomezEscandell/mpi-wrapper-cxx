@@ -18,6 +18,7 @@ struct settings {
     std::string colormap            = "grayscale";
     unsigned max_iter               = 50;
     unsigned min_iter               = 0;
+    bool subsampling                = true;
 
     // Changes span imaginary component to match the image aspect ratio
     void adjust_span() {
@@ -60,5 +61,6 @@ inline std::ostream& operator<<(std::ostream& os, settings const& s) {
         << "colormap:    " << s.colormap   << "\n"
         << "max_iter:    " << s.max_iter   << "\n"
         << "min_iter:    " << s.min_iter   << "\n"
+        << "subsampling: " << s.subsampling << "\n"
     ;
 }

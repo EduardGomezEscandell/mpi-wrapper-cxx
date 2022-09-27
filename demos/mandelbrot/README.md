@@ -74,4 +74,7 @@ max_iter:    30         # positive integer, greater than min_iter
 
 ; Smallest number of iterations represented by colormap
 min_iter:    30         # positive integer, less than max_iter
+
+; Allow computation of multiple points per pixel, then averaging them
+subsampling: true       # [true|false]
 ```
