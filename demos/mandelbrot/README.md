@@ -28,7 +28,7 @@ Otherwise you can simply open the `ppm` image file with some image viewers or wi
 
 ### Results
 
-The default results producte the following image:
+The default values produce the following image:
 
 ![image](data/defaults.png)
 
