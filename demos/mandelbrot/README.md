@@ -32,9 +32,13 @@ The default results producte the following image:
 
 ![image](data/defaults.png)
 
-The sample settings file results producte the following image:
+The sample settings file `data/grayscale.ini` results produce the following image:
 
 ![image](data/sample.png)
+
+The sample settings file `data/pastel.ini` results produce the following image:
+
+![image](data/pastel.png)
 
 ### Settings
 The settings follow schema with the mentioned defauls:
