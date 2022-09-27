@@ -7,12 +7,12 @@ constexpr double complex_squared_norm(std::complex<double> z) {
     return z.real()*z.real() + z.imag()*z.imag();
 }
 
-inline std::size_t mandelbrot_escape_time(std::complex<double> const& c, std::size_t max_iter) {
+inline unsigned mandelbrot_escape_time(std::complex<double> const& c, unsigned max_iter) {
     constexpr double escape_radius = 2.0;
     constexpr double escape2 = escape_radius*escape_radius;
 
     std::complex<double> z {0, 0};
-    for(std::size_t iter=0; iter < max_iter; ++iter)
+    for(unsigned iter=0; iter < max_iter; ++iter)
     {
         // TODO: Check if complex multiplication is implemented in hardware
         double r1 = z.real()*z.real();
@@ -51,8 +51,7 @@ void update_image(settings& config, distributed_canvas& canvas) {
             const double real = top_left.real() + progress * config.span.real();
             
             std::complex<double> c {real, imag};
-            std::size_t x = mandelbrot_escape_time(c, config.max_iter);
-            canvas.get(row, col) = colorize(config, x);
+            canvas.get(row, col) = mandelbrot_escape_time(c, config.max_iter);
         });
     });
 }

@@ -51,25 +51,40 @@ void netbpm_writer::ppm_header()
         case encoding::ascii: os << "P3 "; break;
         case encoding::binary: os << "P6 "; break;
     }
-    os << canvas.global_width() << " " << canvas.global_height() << " " << to_int(color_depth()) << " " << std::flush;
+    os << canvas.global_width() << " " << canvas.global_height() << " " 
+       << static_cast<int>(colormap_factory(config)->color_depth()) << " " << std::flush;
 }
 
 void netbpm_writer::ppm_body() {
     switch(config.encode) {
-        case encoding::ascii:  return ppm_body_ascii();
-        case encoding::binary: return ppm_body_binary();
+        case encoding::ascii:  return ppm_body_impl(colorize_ascii);
+        case encoding::binary: return ppm_body_impl(colorize_binary);
     }
     throw std::invalid_argument("Unexpected encoding type");
 }
 
-void netbpm_writer::ppm_body_ascii()
+std::string netbpm_writer::colorize_ascii(colormap const& cmap, unsigned score) {
+    auto px = cmap.colorize(score);
+    return std::to_string(static_cast<int>(px[0])) + " "
+        + std::to_string(static_cast<int>(px[1])) + " "
+        + std::to_string(static_cast<int>(px[2])) + " ";
+}
+
+std::string netbpm_writer::colorize_binary(colormap const& cmap, unsigned score) {
+    auto px = cmap.colorize(score);
+    return {*reinterpret_cast<char*>(&px[0]),
+            *reinterpret_cast<char*>(&px[1]),
+            *reinterpret_cast<char*>(&px[2])};
+}
+
+void netbpm_writer::ppm_body_impl(std::string(*colorizer)(colormap const&, unsigned))
 {    
+    std::unique_ptr<const colormap> cmap = colormap_factory(config);
     // Stringifying
-    const std::string data = [this]() {
+    const std::string data = [this, colorizer, &cmap]() {
         std::stringstream data;
-        for(auto const& px: canvas.flat_view()) {
-            data << to_int(px[0]) << ' ' << to_int(px[1]) << ' ' << to_int(px[2]) << ' ';
-        }
+        auto view = canvas.flat_view();
+        std::transform(view.begin(), view.end(), std::ostream_iterator<std::string>(data), [colorizer, &cmap](unsigned score){ return colorizer(*cmap, score); });
         return data.str();
     }();
 
@@ -79,30 +94,6 @@ void netbpm_writer::ppm_body_ascii()
     {    
         if(comm.rank() == rank) {
             file_handle() << data << std::endl;
-            logline(config, true, "Rank ", comm.rank(), " is done writing");
-            std::this_thread::sleep_for(std::chrono::milliseconds{100}); // TODO: This is hella ugly, won't scale with larger images
-        }
-        comm.barrier();
-    }
-}
-
-void netbpm_writer::ppm_body_binary()
-{    
-    // Stringifying
-    const std::string data = [this]() {
-        std::stringstream data;
-        for(auto const& px: canvas.flat_view()) {
-            data << px[0] << px[1] << px[2];
-        }
-        return data.str();
-    }();
-
-    // Writing
-    auto comm = canvas.communicator();
-    for (auto rank: std::ranges::iota_view<int, int>{0, comm.size()})
-    {    
-        if(comm.rank() == rank) {
-            file_handle() << data;
             logline(config, true, "Rank ", comm.rank(), " is done writing");
             std::this_thread::sleep_for(std::chrono::milliseconds{100}); // TODO: This is hella ugly, won't scale with larger images
         }
@@ -240,8 +231,9 @@ const std::map<std::string_view, void(*)(settings&, std::string_view)> ini_reade
     {"span",        [](settings& s, std::string_view v) { s.span.real(parse_value<double>(v)); }},
     {"img_width",   [](settings& s, std::string_view v) { s.img_width  = parse_value<std::size_t>(v); }},
     {"img_height",  [](settings& s, std::string_view v) { s.img_height = parse_value<std::size_t>(v); }},
-    {"max_iter",    [](settings& s, std::string_view v) { s.max_iter   = parse_value<std::size_t>(v); }},
+    {"max_iter",    [](settings& s, std::string_view v) { s.max_iter   = parse_value<unsigned>(v); }},
     {"debug",       [](settings& s, std::string_view v) { s.debug      = parse_value<bool>(v); }},
     {"output",      [](settings& s, std::string_view v) { s.output     = parse_value<std::string>(v); }},
-    {"encoding",    [](settings& s, std::string_view v) { s.encode     = parse_value<encoding>(v); }}
+    {"encoding",    [](settings& s, std::string_view v) { s.encode     = parse_value<encoding>(v); }},
+    {"colormap",    [](settings& s, std::string_view v) { s.colormap   = parse_value<std::string>(v); }}
 };

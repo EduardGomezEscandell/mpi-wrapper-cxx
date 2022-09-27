@@ -24,8 +24,10 @@ private:
     void ppm_header();
     void ppm_body();
 
-    void ppm_body_ascii();
-    void ppm_body_binary();
+    void ppm_body_impl(std::string(*colorizer)(colormap const&, unsigned));
+
+    static std::string colorize_ascii(colormap const& cmap, unsigned score);
+    static std::string colorize_binary(colormap const& cmap, unsigned score);
 };
 
 struct ini_reader {

@@ -45,20 +45,20 @@ public:
 
     // Pixel located at certain global coordinates.
     // Must be in this rank's section
-    pixel& get(std::size_t g_row, std::size_t g_col);
-    pixel const& get(std::size_t g_row, std::size_t g_col) const;
+    unsigned& get(std::size_t g_row, std::size_t g_col);
+    unsigned get(std::size_t g_row, std::size_t g_col) const;
 
     // Getter for comm_
     mpi::communicator communicator() const;
 
     // Returns an iterable of all pixels
-    std::span<pixel> flat_view();
-    std::span<const pixel> flat_view() const;
+    std::span<unsigned> flat_view();
+    std::span<const unsigned> flat_view() const;
    
 private:
     std::size_t width_;         // Global width of the canvas
     std::size_t height_;        // Global height of the canvas
     mpi::communicator comm_;    // Communicator to coordinate threads
-    std::vector<pixel> data_;   // Pixel data in this rank
+    std::vector<unsigned> data_;   // Pixel data in this rank
 };
 
