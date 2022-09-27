@@ -93,7 +93,7 @@ void netbpm_writer::ppm_body_impl(std::string(*colorizer)(colormap const&, unsig
     for (auto rank: std::ranges::iota_view<int, int>{0, comm.size()})
     {    
         if(comm.rank() == rank) {
-            file_handle() << data << std::endl;
+            file_handle() << data << std::flush;
             logline(config, true, "Rank ", comm.rank(), " is done writing");
             std::this_thread::sleep_for(std::chrono::milliseconds{100}); // TODO: This is hella ugly, won't scale with larger images
         }
