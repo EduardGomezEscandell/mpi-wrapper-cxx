@@ -109,6 +109,11 @@ ini_reader::ini_reader(std::filesystem::path path) : path{path}
 settings ini_reader::read()
 {
     std::ifstream is(path);
+
+    if(!is.is_open()) {
+        throw std::runtime_error("Failed to open file '" + path.string() + "'\n");
+    }
+
     settings config;
     std::string line;
     for(std::size_t ln = 1; std::getline(is, line); ++ln) {
