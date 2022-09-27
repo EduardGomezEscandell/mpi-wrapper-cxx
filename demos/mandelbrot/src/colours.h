@@ -31,6 +31,8 @@ namespace colors {
 
 struct colormap {
     virtual pixel colorize(unsigned score) const = 0;
+    virtual ~colormap() = default;
+
     constexpr virtual channel color_depth() const noexcept = 0;
 
     using create_type = std::unique_ptr<colormap> (*)(settings const& config);

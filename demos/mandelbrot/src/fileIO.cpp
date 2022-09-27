@@ -179,19 +179,10 @@ std::optional<ini_reader::kv_pair> ini_reader::parse_line(std::string_view line)
 template<typename T>
 T parse_value(std::string_view s) {
     T x = 0;
-    if(std::from_chars<T>(s.begin(), s.end(), x).ec == std::errc::invalid_argument) {
-        throw std::invalid_argument("Failed to parse integral value: '" + std::string{s} + "'");
-    }
-    return x;
-}
-
-template<>
-std::size_t parse_value(std::string_view s) {
-    unsigned long x = 0;
     if(std::from_chars(&(*s.begin()), &(*s.end()), x).ec == std::errc::invalid_argument) {
         throw std::invalid_argument("Failed to parse integral value: '" + std::string{s} + "'");
     }
-    return static_cast<std::size_t>(x);
+    return x;
 }
 
 template<>
@@ -205,14 +196,6 @@ bool parse_value(std::string_view s) {
     if(s == "true") return true;
     if(s == "false") return false;
     throw std::invalid_argument("Failed to parse boolean value: '" + std::string{s} + "'");
-}
-
-template<>
-std::complex<double> parse_value(std::string_view s) {
-    std::stringstream v{std::string(s.begin(), s.end())};
-    std::complex<double> z {};
-    v >> z;
-    return z;
 }
 
 template<>
