@@ -1,3 +1,2 @@
-add_executable(mpidemo mpidemo.cpp)
-target_include_directories(mpidemo INTERFACE ..)
-target_link_libraries(mpidemo mpicxx ${MPI_C})
+add_subdirectory(helloworld)
+add_subdirectory(mandelbrot)

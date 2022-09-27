@@ -34,7 +34,7 @@ struct container_traits<std::array<T, S>> {
     [[nodiscard]] static constexpr auto front(std::array<T, S> const& c)   noexcept ->  T const&     { assert(size(c) > 0); return c.front(); }
     [[nodiscard]] static constexpr auto pointer(std::array<T, S> & c)      noexcept -> T*            { return c.data(); }
     [[nodiscard]] static constexpr auto pointer(std::array<T, S> const& c) noexcept -> T const*      { return c.data(); }
-    static constexpr void try_resize(std::array<T, S> const&, std::size_t sz) noexcept { assert(sz <= S); }
+    static constexpr void try_resize(std::array<T, S> const&, [[maybe_unused]] std::size_t sz) noexcept { assert(sz <= S); }
 };
 
 template<typename T, std::size_t S>
@@ -46,7 +46,7 @@ struct container_traits<T[S]> {
     [[nodiscard]] static constexpr auto front(T const c[S])   noexcept -> T const&    { assert(size(c) > 0); return c[0]; }
     [[nodiscard]] static constexpr auto pointer(T c[S])       noexcept -> T*          { return c; }
     [[nodiscard]] static constexpr auto pointer(T const c[S]) noexcept -> T const*    { return c; }
-    static constexpr void try_resize(const T[S], std::size_t sz) noexcept  { assert(sz <= S); }
+    static constexpr void try_resize(const T[S], [[maybe_unused]] std::size_t sz) noexcept  { assert(sz <= S); }
 };
 
 template<typename T>

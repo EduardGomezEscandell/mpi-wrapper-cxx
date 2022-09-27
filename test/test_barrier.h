@@ -3,7 +3,7 @@
 #include <fstream>
 
 #include "doctest/doctest.h"
-#include "mpicxx/mpi.h"
+#include "mpicxx/mpicxx.h"
 
 #include "testutils.h"
 

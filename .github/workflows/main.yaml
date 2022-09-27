@@ -26,11 +26,6 @@ jobs:
 
       - name: Build
         run: MPI_ENABLED=true bash configure.sh
-      
-      - name: Run
-        run: |
-          rm -rf tmp/ &> /dev/null
-          mpirun -np 2 bin/Release/mpidemo
 
       - name: Test 1 cores
         run: |
@@ -68,9 +63,6 @@ jobs:
       - name: Build
         run: bash configure.sh
 
-      - name: Run
-        run: bin/Release/mpidemo
-
       - name: Test
         run: ./bin/Release/test
 
@@ -85,9 +77,6 @@ jobs:
 
       - name: Build
         run: .\configure.bat
-      
-      - name: Run
-        run: .\bin\Release\mpidemo.exe
-  
+
       - name: Test
         run: .\bin\Release\test.exe
