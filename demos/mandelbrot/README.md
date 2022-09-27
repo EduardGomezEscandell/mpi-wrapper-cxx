@@ -28,15 +28,15 @@ Otherwise you can simply open the `ppm` image file with some image viewers or wi
 
 ### Results
 
-The default results producte the following image:
+The default results produces the following image:
 
 ![image](data/defaults.png)
 
-The sample settings file `data/grayscale.ini` results produce the following image:
+The sample settings file `data/grayscale.ini` produces the following image:
 
 ![image](data/sample.png)
 
-The sample settings file `data/pastel.ini` results produce the following image:
+The sample settings file `data/pastel.ini` produces the following image:
 
 ![image](data/pastel.png)
 
