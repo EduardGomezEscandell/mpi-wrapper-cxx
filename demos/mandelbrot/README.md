@@ -53,7 +53,7 @@ center_imag: 0.0        # float
 ; The height is auto-adjusted with image aspect ratio
 span:        4.0        # positive integer
 
-; Width and heigh of the image, in pixels
+; Width and height of the image, in pixels
 img_width:   1920       # positive integer
 img_height:  1080       # positive integer
 
