@@ -1,5 +1,5 @@
 # MPI for C++
-This codebase is a proof-of-concpt wrapper around MPI C libraries with modern C++ constructs to allow for better code. See some demos:
+This codebase is a proof-of-concept wrapper around MPI C libraries with modern C++ constructs to allow for better code. See some demos:
 - [Hello world](demos/helloworld/)
 - [Mandelbrot set drawer](demos/mandelbrot/)
 

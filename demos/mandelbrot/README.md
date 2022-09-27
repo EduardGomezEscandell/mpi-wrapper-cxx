@@ -10,9 +10,9 @@ Run the executable with a single argument
 ./bin/Release/mandelbrot [settings-file]
 
 # Run with MPI
-mpirun -np 4 ./bin/Release/mandelbrot demos/mandelbrot/data/mandelbrot.ini [settings-file]
+mpirun -np 4 ./bin/Release/mandelbrot demos/mandelbrot/data/grayscale.ini
 ```
-Do not specify a file if you want to run the defaults. You can see an example settings file in `data/mandelbrot.ini`.
+Do not specify a file if you want to run the defaults. You can see an example settings file in `data/grayscale.ini`.
 This will create a file with format NetPBM. Conversion to a reasonable image type is outside the scope of this project,
 but you can use:
 
@@ -28,13 +28,17 @@ Otherwise you can simply open the `ppm` image file with some image viewers or wi
 
 ### Results
 
-The default values produce the following image:
+The default results producte the following image:
 
 ![image](data/defaults.png)
 
-The sample settings file results producte the following image:
+The sample settings file `data/grayscale.ini` results produce the following image:
 
 ![image](data/sample.png)
+
+The sample settings file `data/pastel.ini` results produce the following image:
+
+![image](data/pastel.png)
 
 ### Settings
 The settings follow schema with the mentioned defauls:
@@ -64,4 +68,7 @@ output:      output.ppm # string
 
 ; What format to store the image (NetPMB ascii or binary)
 encoding:    binary     # [asccii|binary]
+
+; What colormap to use
+colormap:    grayscale # [grayscale|pastel]
 ```

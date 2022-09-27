@@ -12,10 +12,11 @@ struct settings {
     std::complex<double> span       = {4.0, 2.25};
     std::size_t img_width           = 1920;
     std::size_t img_height          = 1080;
-    std::size_t max_iter            = 50;
+    unsigned max_iter               = 50;
     bool debug                      = false;
     std::filesystem::path output    = {"output.ppm"};
     encoding encode                 = encoding::binary;
+    std::string colormap            = "grayscale";
 
     // Changes span imaginary component to match the image aspect ratio
     void adjust_span() {
@@ -56,5 +57,6 @@ inline std::ostream& operator<<(std::ostream& os, settings const& s) {
         << "debug:       " << std::boolalpha << s.debug      << "\n"
         << "output:      " << s.output     << "\n"
         << "encoding:    " << s.encode     << "\n"
+        << "colormap:    " << s.colormap   << "\n"
     ;
 }
