@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "mpicxx/mpicxx.h"
 #include "settings.h"
 #include "fileIO.h"
 
@@ -80,24 +81,44 @@ std::string netbpm_writer::colorize_binary(colormap const& cmap, unsigned score)
 void netbpm_writer::ppm_body_impl(std::string(*colorizer)(colormap const&, unsigned))
 {    
     std::unique_ptr<const colormap> cmap = colormap_factory(config);
+    auto comm = canvas.communicator();
+
     // Stringifying
-    const std::string data = [this, colorizer, &cmap]() {
+    std::string data = [this, colorizer, &cmap]() {
         std::stringstream data;
         auto view = canvas.flat_view();
-        std::transform(view.begin(), view.end(), std::ostream_iterator<std::string>(data), [colorizer, &cmap](unsigned score){ return colorizer(*cmap, score); });
+        std::transform(view.begin(), view.end(), std::ostream_iterator<std::string>(data),
+            [colorizer, &cmap](unsigned score){
+                return colorizer(*cmap, score);
+            });
         return data.str();
     }();
+    logline(config, true, "Rank ", comm.rank(), " is done computing");
+   
+    // Some memory accounting
+    constexpr mpi::size_type root = 0;
+    std::size_t buffer_size = data.size();
+    std::vector<std::size_t> all_sizes(static_cast<std::size_t>(comm.size()), 0u);
+    comm.gather(root, buffer_size, all_sizes);
 
-    // Writing
-    auto comm = canvas.communicator();
-    for (auto rank: std::ranges::iota_view<int, int>{0, comm.size()})
-    {    
-        if(comm.rank() == rank) {
-            file_handle() << data << std::flush;
-            logline(config, true, "Rank ", comm.rank(), " is done writing");
-            std::this_thread::sleep_for(std::chrono::milliseconds{100}); // TODO: This is hella ugly, won't scale with larger images
-        }
-        comm.barrier();
+    // Sending data to rank 0
+    if(comm.rank() != root) {
+        comm.send(root, comm.rank(), data);
+        return;
+    }
+
+    // Recieving data at rank 0
+    auto file = file_handle();
+    file << data;
+    logline(config, true, "Rank 0: data written");
+    for (auto rank: std::ranges::iota_view<int, int>{1, comm.size()})
+    {
+        mpi::status s;
+        data.clear();
+        data.resize(all_sizes[static_cast<std::size_t>(rank)]);
+        comm.recv(rank, rank, data, s);
+        file << data;
+        logline(config, true, "Rank ", rank, ": data recieved and written");
     }
 }
 
