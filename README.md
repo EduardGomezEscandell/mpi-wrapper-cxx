@@ -134,7 +134,7 @@ To compile in windows, install Microsoft Visual Studio and find the path to it. 
 ### Linux
 First you need to install dependencies:
 ```
-sudo apt-get -y install cmake
+sudo apt-get -y install cmake libtbb-dev
 sudo apt-get -y install mpich    # Only if you want to compile with MPI
 ```
 Make sure you have GCC version at least 11.2. Otherwise you might need to add some compiler flags to allow for newer C++ features.

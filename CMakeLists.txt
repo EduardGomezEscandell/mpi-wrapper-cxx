@@ -36,6 +36,7 @@ if(${MPI_ENABLED} STREQUAL "true")
     add_definitions(-DOMPI_SKIP_MPICXX)
 endif()
 
+find_package(TBB REQUIRED)
 
 add_subdirectory(external_libraries)
 add_subdirectory(mpicxx)
