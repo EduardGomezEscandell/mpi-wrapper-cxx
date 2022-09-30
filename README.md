@@ -1,7 +1,10 @@
-# MPI for C++
+# MPI wrapper for C++
 This codebase is a proof-of-concept wrapper around MPI C libraries with modern C++ constructs to allow for better code. See some demos:
 - [Hello world](demos/helloworld/)
 - [Mandelbrot set drawer](demos/mandelbrot/)
+
+### Platform-independent
+You can disable MPI if the library is not available in your system, and a mock implementation will run as if you called the program with MPI in a single process.
 
 ### Less verbose
 Thanks to template argument deduction and constexpr functions.
