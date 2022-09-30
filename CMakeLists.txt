@@ -29,14 +29,20 @@ if (SANITIZE)
   endif()
 endif()
 
-# Linking MPI
+# Distributed-memory parallelism
 if(${MPI_ENABLED} STREQUAL "true")
 	find_package(MPI REQUIRED)
     include_directories(SYSTEM ${MPI_INCLUDE_PATH})
     add_definitions(-DOMPI_SKIP_MPICXX)
 endif()
 
-find_package(TBB REQUIRED)
+# Shared-memory standard parallelism
+if(MSVC)
+  set(TBBLIB "")
+else()
+  find_package(TBB REQUIRED)
+  set(TBBLIB TBB::tbb)
+endif()
 
 add_subdirectory(external_libraries)
 add_subdirectory(mpicxx)
