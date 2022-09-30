@@ -93,7 +93,7 @@ class basic_communicator<Os::Linux, true> {
     template<mpi::ValidContainer T>
     void send(id_type destination, tag_type tag, T& data) const {
         environment::assert_running();
-        MPI_Send(&container_traits<T>::front(data),
+        MPI_Send(container_traits<T>::pointer(data),
             static_cast<size_type>(container_traits<T>::size(data)),
             get_datatype<Os::Linux, true, typename container_traits<T>::data>(),
             destination, tag, handle());
