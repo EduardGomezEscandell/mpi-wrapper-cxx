@@ -156,15 +156,9 @@ MPI_ENABLED=true bash configure.sh
 Change from Release to Debug if relevant.
 
 ## Run
-Once compiled, you can run it with:
-```Powershell
-.\bin\mpidemo.exe          # On windows
-```
-```bash
-./bin/mpidemo              # On Linux
-mpirun -np 4 bin/mpidemo   # On Linux with mpi
-```
-Change the `4` with the number of ranks you desire. Note that if you mpirun an executable compiled without MPI, it's simply going run the same process in each rank independently.
+In order to run a demo, check out either of the following:
+- [Hello world](demos/helloworld/)
+- [Mandelbrot set drawer](demos/mandelbrot/)
 
 ## Test
 Once compiled, you can run it with:

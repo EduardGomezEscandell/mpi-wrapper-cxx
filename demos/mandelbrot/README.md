@@ -1,12 +1,13 @@
 # Mandelbrot set drawer
 
 This is a sample project to show very basic use of MPI. An image is generated, where each process writes part of the image.
+The image is split into sections, and each process draws their section of the image. Within each process, multithreading is also used.
 
 
-### Usage
+### How to run
 Run the executable with a single argument
 ```bash
-# Run in serial
+# Run in a single process
 ./bin/Release/mandelbrot [settings-file]
 
 # Run with MPI
@@ -24,7 +25,7 @@ sudo apt-get -y update && sudo apt-get -y install netpbm
 pnmtopng output.ppm > image.png
 ```
 
-Otherwise you can simply open the `ppm` image file with some image viewers or with Inkscape.
+Otherwise you can simply open the `ppm` image file with some image viewers (e.g. Eye of Gnome on Linux, Inkscape on Windows).
 
 ### Results
 
@@ -76,5 +77,6 @@ max_iter:    30         # positive integer, greater than min_iter
 min_iter:    0          # positive integer, less than max_iter
 
 ; Allow computation of multiple points per pixel, then averaging them
+; This slows computation, but acts as an anti-aliasing
 subsampling: true       # [true|false]
 ```
