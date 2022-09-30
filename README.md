@@ -121,7 +121,6 @@ The following instructions are implemented:
 - Support for `std::span`
 - More instructions.
 - More tests
-- Actual demos
 - Use doctest's MPI testing framework
 
 # How-to
