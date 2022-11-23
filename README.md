@@ -4,11 +4,11 @@ This codebase is a proof-of-concept wrapper around MPI C libraries with modern C
 - [Mandelbrot set drawer](demos/mandelbrot/)
 
 ## Look mum, I'm on TV
-This repo was feature in a youtube video on the Ubuntu chanel:
+This repo was featured in a youtube video on the Ubuntu chanel:
 https://www.youtube.com/watch?v=08WDGV0u58Y
 
 If that's where you come from,here are some relevant links:
-- The library is split inside [/mpicxx/](mpicxx)
+- The MPI wrapper is inside [/mpicxx/](mpicxx)
 - The Mandelbrot set demo is [/demos/mandelbrot/](demos/mandelbrot)
 
 ## Status
