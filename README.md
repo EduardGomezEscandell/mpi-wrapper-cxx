@@ -3,6 +3,87 @@ This codebase is a proof-of-concept wrapper around MPI C libraries with modern C
 - [Hello world](demos/helloworld/)
 - [Mandelbrot set drawer](demos/mandelbrot/)
 
+## Look mum, I'm on TV
+This repo was feature in a youtube video on the Ubuntu chanel:
+https://www.youtube.com/watch?v=08WDGV0u58Y
+
+If that's where you come from,here are some relevant links:
+- The library is split inside [/mpicxx/](mpicxx)
+- The Mandelbrot set demo is [/demos/mandelbrot/](demos/mandelbrot)
+
+## Status
+This is a proof of concept so please don't use it for anything important.
+
+**DONE**
+
+The following instructions are implemented:
+- `MPI_Init` becomes `mpi::environment::initialize`, and is called automatically when a communicator is first used.
+- `MPI_Finalize` becomes `mpi::environment::finalize`, and is called automatically upon program termination.
+- `MPI_Get_processor_name` becomes `mpi::communicator::processor_name`
+- `MPI_Comm_size` becomes `mpi::communicator::size`
+- `MPI_Comm_rank` becomes `mpi::communicator::rank`
+- `MPI_Barrier` becomes `mpi::communicator::barrier`
+- `MPI_Send` becomes `mpi::communicator::send`
+- `MPI_Recv` becomes `mpi::communicator::recieve`
+- `MPI_Bcast` becomes `mpi::communicator::broadcast`
+- `MPI_Gather` becomes `mpi::communicator::gather`
+
+**TODO**
+
+- Implement a wrapper for Windows MPI
+- Support for `std::span`
+- More instructions.
+- More tests
+- Use doctest's MPI testing framework
+
+# How-to
+## Compile
+MPI is only available on Linux (WSL included!).
+
+### Windows
+To compile in windows, install Microsoft Visual Studio and find the path to it. In my case it was `C:\Program Files\Microsoft Visual Studio\2022`. Edit file `configure.bat` and overwrite my path with yours. Then run:
+```
+.\configure.bat
+```
+
+### Linux
+First you need to install dependencies:
+```
+sudo apt-get -y install cmake libtbb-dev
+sudo apt-get -y install mpich    # Only if you want to compile with MPI
+```
+Make sure you have GCC version at least 11.2. Otherwise you might need to add some compiler flags to allow for newer C++ features.
+
+Then you can compile, optionally enabling or disabling MPI:
+```
+MPI_ENABLED=true bash configure.sh
+```
+
+### Linker errors?
+Note: if you compile it without MPI, and later want to compile it in MPI, you'll get a long list of linker errors. Fix it by doing the following:
+```bash
+rm -r bin/Release/ build/Release/
+MPI_ENABLED=true bash configure.sh
+```
+Change from Release to Debug if relevant.
+
+## Run
+In order to run a demo, check out either of the following:
+- [Hello world](demos/helloworld/)
+- [Mandelbrot set drawer](demos/mandelbrot/)
+
+## Test
+Once compiled, you can run it with:
+```Powershell
+.\bin\test.exe          # On windows
+```
+```bash
+./bin/test              # On Linux
+mpirun -np 4 bin/test   # On Linux with mpi
+```
+Change the `4` with the number of ranks you desire.
+
+# A few reasons to use a wrapper similar to this one
 ### Platform-independent
 You can disable MPI if the library is not available in your system, and a mock implementation will run as if you called the program with MPI in a single process.
 
@@ -96,76 +177,3 @@ comm.broadcast(data, 0);
 
 ### Portable
 When desired, the wrapper can be substituted at compile-time with a mock wrapper that mimicks MPI behaviour as though there was only one rank, without actaully using any MPI libraries. This allows you to target applications that work in platforms where MPI is not available, without splitting your codebase. To ensure equal behaviour, the same unit tests run for the MPI and mock wrappers.
-
-
-## Status
-Very, very early stage, assume everything is broken and an ever-braking API.
-
-**DONE**
-
-The following instructions are implemented:
-- `MPI_Init` becomes `mpi::environment::initialize`, and is called automatically when a communicator is first used.
-- `MPI_Finalize` becomes `mpi::environment::finalize`, and is called automatically upon program termination.
-- `MPI_Get_processor_name` becomes `mpi::communicator::processor_name`
-- `MPI_Comm_size` becomes `mpi::communicator::size`
-- `MPI_Comm_rank` becomes `mpi::communicator::rank`
-- `MPI_Barrier` becomes `mpi::communicator::barrier`
-- `MPI_Send` becomes `mpi::communicator::send`
-- `MPI_Recv` becomes `mpi::communicator::recieve`
-- `MPI_Bcast` becomes `mpi::communicator::broadcast`
-- `MPI_Gather` becomes `mpi::communicator::gather`
-
-**TODO**
-
-- Implement a wrapper for Windows MPI
-- Support for `std::span`
-- More instructions.
-- More tests
-- Use doctest's MPI testing framework
-
-# How-to
-## Compile
-MPI is only available on Linux (WSL included!).
-
-### Windows
-To compile in windows, install Microsoft Visual Studio and find the path to it. In my case it was `C:\Program Files\Microsoft Visual Studio\2022`. Edit file `configure.bat` and overwrite my path with yours. Then run:
-```
-.\configure.bat
-```
-
-### Linux
-First you need to install dependencies:
-```
-sudo apt-get -y install cmake libtbb-dev
-sudo apt-get -y install mpich    # Only if you want to compile with MPI
-```
-Make sure you have GCC version at least 11.2. Otherwise you might need to add some compiler flags to allow for newer C++ features.
-
-Then you can compile, optionally enabling or disabling MPI:
-```
-MPI_ENABLED=true bash configure.sh
-```
-
-### Linker errors?
-Note: if you compile it without MPI, and later want to compile it in MPI, you'll get a long list of linker errors. Fix it by doing the following:
-```bash
-rm -r bin/Release/ build/Release/
-MPI_ENABLED=true bash configure.sh
-```
-Change from Release to Debug if relevant.
-
-## Run
-In order to run a demo, check out either of the following:
-- [Hello world](demos/helloworld/)
-- [Mandelbrot set drawer](demos/mandelbrot/)
-
-## Test
-Once compiled, you can run it with:
-```Powershell
-.\bin\test.exe          # On windows
-```
-```bash
-./bin/test              # On Linux
-mpirun -np 4 bin/test   # On Linux with mpi
-```
-Change the `4` with the number of ranks you desire.
